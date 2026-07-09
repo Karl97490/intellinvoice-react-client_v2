@@ -1,15 +1,15 @@
 import { Button } from "flowbite-react";
-import service from "./services/index.service";
 import { useEffect } from "react";
+import authService from "./services/auth.service";
 
 function App() {
   useEffect(() => {
-    testApi();
+    testAuthService();
   });
 
-  const testApi = async () => {
+  const testAuthService = async () => {
     try {
-      const response = await service.test();
+      const response = await authService.test();
       console.log(response);
     } catch (error) {
       console.log(error.response);
