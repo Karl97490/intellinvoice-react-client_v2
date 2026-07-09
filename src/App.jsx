@@ -1,6 +1,4 @@
 import { Button } from "flowbite-react";
-import { useEffect } from "react";
-import authService from "./services/auth.service";
 
 function App() {
   return (
