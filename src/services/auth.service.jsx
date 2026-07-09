@@ -6,8 +6,16 @@ class AuthService extends Service {
     this.urlPrefixe = "/api" + urlPrefixe;
   }
 
-  test = () => {
-    return this.service.get(this.urlPrefixe + "/test");
+  signup = (requestBody) => {
+    return this.service.post(this.urlPrefixe + "/signup", requestBody);
+  };
+
+  login = (requestBody) => {
+    return this.service.post(this.urlPrefixe + "/login", requestBody);
+  };
+
+  verify = () => {
+    return this.service.get(this.urlPrefixe + "/verify");
   };
 }
 
