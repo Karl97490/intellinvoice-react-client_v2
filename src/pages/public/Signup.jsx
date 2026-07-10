@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
@@ -26,7 +26,7 @@ const Signup = () => {
   const [successToast, setSuccessToast] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const navigate = useNavigate();
-  useEffect(() => {}, []);
+
   const handleSignup = async (e) => {
     e.preventDefault();
     console.log("signup...");
@@ -46,7 +46,6 @@ const Signup = () => {
       setErrorMessage(`${requiredInputs[0]} is required.`);
       return;
     }
-
     const body = {
       ...signupForm,
     };
@@ -74,6 +73,7 @@ const Signup = () => {
       }
     }
   };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setSignupForm((prev) => ({
