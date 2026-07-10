@@ -4,17 +4,54 @@ import { Button, Label, TextInput } from "flowbite-react";
 import { Link } from "react-router-dom";
 
 const Signup = () => {
-  const [signupForm, setSignupForm] = useState(null);
+  const [signupForm, setSignupForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+  });
   const [isSignup, setIsSignup] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {}, []);
   const handleSignup = async (e) => {};
-  const handleChange = (e) => {};
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setSignupForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
   return (
     <>
       <h1>Signup component</h1>
       <form className="flex max-w-md flex-col gap-4">
+        <div className="flex gap-2">
+          <div className="mb-2 block w-full">
+            <Label htmlFor="firstName">First Name</Label>
+            <TextInput
+              id="firstName"
+              type="text"
+              name="firstName"
+              value={signupForm.firstName}
+              onChange={handleChange}
+              placeholder="John"
+              required
+            />
+          </div>
+          <div className="mb-2 block w-full">
+            <Label htmlFor="lastName">Last Name</Label>
+            <TextInput
+              id="lastName"
+              type="text"
+              name="lastName"
+              value={signupForm.lastName}
+              onChange={handleChange}
+              placeholder="Doe"
+              required
+            />
+          </div>
+        </div>
         <div>
           <div className="mb-2 block">
             <Label htmlFor="email">Your email</Label>
@@ -22,25 +59,26 @@ const Signup = () => {
           <TextInput
             id="email"
             type="email"
+            name="email"
+            value={signupForm.email}
+            onChange={handleChange}
             placeholder="name@flowbite.com"
             required
           />
-        </div>
-        <div className="flex gap-2">
-          <div className="mb-2 block w-full">
-            <Label htmlFor="firstName">First Name</Label>
-            <TextInput id="firstName" type="text" required />
-          </div>
-          <div className="mb-2 block w-full">
-            <Label htmlFor="lastName">Last Name</Label>
-            <TextInput id="lastName" type="text" required />
-          </div>
         </div>
         <div>
           <div className="mb-2 block">
             <Label htmlFor="password">Your password</Label>
           </div>
-          <TextInput id="password" type="password" required />
+          <TextInput
+            id="password"
+            type="password"
+            name="password"
+            value={signupForm.password}
+            onChange={handleChange}
+            placeholder="******"
+            required
+          />
         </div>
         <div className="flex justify-center">
           <p className="text-red-400">Error Message</p>
