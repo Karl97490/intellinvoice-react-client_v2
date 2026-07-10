@@ -1,8 +1,18 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Label, TextInput, Spinner } from "flowbite-react";
+import {
+  Button,
+  Label,
+  TextInput,
+  Spinner,
+  Toast,
+  ToastToggle,
+} from "flowbite-react";
+import { Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import authService from "../../services/auth.service";
+import delay from "../../utils/delay";
+import validateRequiredFields from "../../utils/validateRequiredFields";
 
 const Signup = () => {
   const [signupForm, setSignupForm] = useState({
@@ -13,6 +23,8 @@ const Signup = () => {
   });
   const [isSignuping, setIsSignuping] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [successToast, setSuccessToast] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {}, []);
   const handleSignup = async (e) => {
@@ -20,17 +32,18 @@ const Signup = () => {
     console.log("signup...");
     setIsSignuping(true);
 
-    const missingInput = Object.keys(signupForm).filter(
-      (key) => signupForm[key] === "",
-    );
-    if (missingInput.length) {
-      console.log(missingInput);
+    const requiredInputs = validateRequiredFields(signupForm);
+    if (requiredInputs.length) {
+      console.log(requiredInputs);
       setIsSignuping(false);
-      if (missingInput[0] === "firstName" || missingInput[0] === "lastName") {
+      if (
+        requiredInputs[0] === "firstName" ||
+        requiredInputs[0] === "lastName"
+      ) {
         setErrorMessage("First name and last name are required.");
         return;
       }
-      setErrorMessage(`${missingInput[0]} is required.`);
+      setErrorMessage(`${requiredInputs[0]} is required.`);
       return;
     }
 
@@ -42,6 +55,13 @@ const Signup = () => {
       console.log(body);
       setIsSignuping(false);
       console.log(response);
+      // Pop up Toast Success signup
+      setSuccessToast(true);
+      // Redirecting loading state true
+      setIsRedirecting(true);
+      // Waiting time before redirecting
+      await delay(2000);
+      // Redirecting to loging page
       navigate("/login");
     } catch (error) {
       console.log(error.response);
@@ -61,6 +81,26 @@ const Signup = () => {
       [name]: value,
     }));
   };
+
+  if (isRedirecting) {
+    return (
+      <>
+        {successToast && (
+          <Toast className="border border-gray-100 ">
+            <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
+              <Check size={14} />
+            </div>
+            <div className="ml-3 text-sm font-normal">Signup sucessfully.</div>
+          </Toast>
+        )}
+        <div className="mx-auto flex flex-col gap-2 items-center">
+          <Spinner aria-label="Redirecting loading spinner" size="xl" />
+          <span className="text-md">Redirecting...</span>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <h1>Signup component</h1>
@@ -122,7 +162,7 @@ const Signup = () => {
             </p>
           )}
         </div>
-        <Button type="submit" className="cursor-pointer">
+        <Button type="submit" className="cursor-pointer" disabled={isSignuping}>
           {isSignuping ? (
             <>
               <Spinner aria-label="Spinner loading button" size="sm" />
