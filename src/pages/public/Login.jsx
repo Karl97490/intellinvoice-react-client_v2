@@ -1,6 +1,28 @@
 import { Button, Label, TextInput } from "flowbite-react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+
 const Login = () => {
+  const [signinForm, setSigninForm] = useState({
+    email: "",
+    password: "",
+  });
+  const [isLogging, setIsLogging] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [successToast, setSuccessToast] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSignIn = async (e) => {};
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setSigninForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   return (
     <>
       <h1>Login component</h1>
@@ -13,8 +35,8 @@ const Login = () => {
             id="email"
             type="email"
             name="email"
-            value={undefined}
-            onChange={undefined}
+            value={signinForm.email}
+            onChange={handleChange}
             placeholder="name@flowbite.com"
           />
         </div>
@@ -26,8 +48,8 @@ const Login = () => {
             id="password"
             type="password"
             name="password"
-            value={undefined}
-            onChange={undefined}
+            value={signinForm.password}
+            onChange={handleChange}
             placeholder="******"
           />
         </div>
