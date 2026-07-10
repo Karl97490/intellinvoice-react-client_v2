@@ -1,8 +1,9 @@
-import { Button, Label, TextInput } from "flowbite-react";
+import { Button, Label, TextInput, Spinner } from "flowbite-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import authService from "../../services/auth.service";
 import validateRequiredFields from "../../utils/validateRequiredFields";
+import delay from "../../utils/delay";
 
 const Login = () => {
   const [signinForm, setSigninForm] = useState({
@@ -18,7 +19,7 @@ const Login = () => {
   const handleSignIn = async (e) => {
     e.preventDefault();
     console.log("signin process...");
-
+    setIsLogging(true);
     const requiredInputs = validateRequiredFields(signinForm);
     if (requiredInputs.length) {
       setErrorMessage(`${requiredInputs[0]} is required.`);
@@ -32,8 +33,10 @@ const Login = () => {
     try {
       const response = await authService.login(body);
       console.log(response); // return auth token
+      setIsLogging(false);
     } catch (error) {
       console.log(error.response);
+      setIsLogging(false);
       if (error.response && error.response.status === 400) {
         setErrorMessage(error.response.data.message);
       }
@@ -89,7 +92,14 @@ const Login = () => {
           )}
         </div>
         <Button type="submit" className="cursor-pointer">
-          Sign In
+          {isLogging ? (
+            <>
+              <Spinner aria-label="Spinner loading button" size="sm" />
+              <span className="pl-3">Loading...</span>
+            </>
+          ) : (
+            <>Sign In</>
+          )}
         </Button>
         <div className="flex justify-center gap-1">
           <p>Don't have an account yet?</p>
