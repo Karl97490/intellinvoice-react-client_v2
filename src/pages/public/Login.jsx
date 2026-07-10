@@ -15,7 +15,7 @@ const Login = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [successToast, setSuccessToast] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
-  const { storeToken } = useContext(AuthContext);
+  const { storeToken, authenticateUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSignIn = async (e) => {
@@ -34,8 +34,8 @@ const Login = () => {
     console.log(body);
     try {
       const response = await authService.login(body);
-      console.log(response); // return auth token
       storeToken(response.data.authToken); // store token in the local storage
+      await authenticateUser(); // verify token validity with server
       setIsLogging(false);
     } catch (error) {
       console.log(error.response);
