@@ -1,6 +1,7 @@
-import { Button, Label, TextInput, Spinner } from "flowbite-react";
+import { Button, Label, TextInput, Spinner, Toast } from "flowbite-react";
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Check } from "lucide-react";
 import { AuthContext } from "../../contexts/auth.context";
 import authService from "../../services/auth.service";
 import validateRequiredFields from "../../utils/validateRequiredFields";
@@ -36,14 +37,26 @@ const Login = () => {
       const response = await authService.login(body);
       storeToken(response.data.authToken); // store token in the local storage
       await authenticateUser(); // verify token validity with server
+      // Logging state loading
       setIsLogging(false);
+      // Pop up success toast
+      setSuccessToast(true);
+      // Redirecting loading state true
+      setIsRedirecting(true);
+      // Waiting time before redirecting
+      await delay(2000);
+      // Navigate to dashboard page
+      navigate("/signup");
     } catch (error) {
       console.log(error.response);
       setIsLogging(false);
       if (error.response && error.response.status === 400) {
         setErrorMessage(error.response.data.message);
       }
-      if (error.response && error.response.status === 500) {
+      if (
+        error.response &&
+        (error.response.status === 500 || error.response.status === 401)
+      ) {
         setErrorMessage("Something went wrong. Please try again.");
       }
     }
@@ -56,6 +69,25 @@ const Login = () => {
       [name]: value,
     }));
   };
+
+  if (isRedirecting) {
+    return (
+      <>
+        {successToast && (
+          <Toast className="border border-gray-100 ">
+            <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
+              <Check size={14} />
+            </div>
+            <div className="ml-3 text-sm font-normal">Signin sucessfully.</div>
+          </Toast>
+        )}
+        <div className="mx-auto flex flex-col gap-2 items-center">
+          <Spinner aria-label="Redirecting loading spinner" size="xl" />
+          <span className="text-md">Redirecting...</span>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import {
   Button,
   Label,
@@ -9,7 +9,6 @@ import {
   ToastToggle,
 } from "flowbite-react";
 import { Check } from "lucide-react";
-import { Link } from "react-router-dom";
 import authService from "../../services/auth.service";
 import delay from "../../utils/delay";
 import validateRequiredFields from "../../utils/validateRequiredFields";
