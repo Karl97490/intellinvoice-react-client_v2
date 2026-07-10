@@ -1,6 +1,7 @@
 import { Button, Label, TextInput, Spinner } from "flowbite-react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../../contexts/auth.context";
 import authService from "../../services/auth.service";
 import validateRequiredFields from "../../utils/validateRequiredFields";
 import delay from "../../utils/delay";
@@ -14,6 +15,7 @@ const Login = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [successToast, setSuccessToast] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const { storeToken } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSignIn = async (e) => {
@@ -33,6 +35,7 @@ const Login = () => {
     try {
       const response = await authService.login(body);
       console.log(response); // return auth token
+      storeToken(response.data.authToken); // store token in the local storage
       setIsLogging(false);
     } catch (error) {
       console.log(error.response);
