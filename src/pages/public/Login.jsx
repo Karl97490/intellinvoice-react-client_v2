@@ -46,7 +46,7 @@ const Login = () => {
       // Waiting time before redirecting
       await delay(2000);
       // Navigate to dashboard page
-      navigate("/signup");
+      navigate("/dashboard");
     } catch (error) {
       console.log(error.response);
       setIsLogging(false);

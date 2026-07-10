@@ -33,6 +33,7 @@ const AuthProviderWrapper = (props) => {
   const stateContext = {
     storeToken,
     authenticateUser,
+    isLoggedIn,
   };
 
   return (
