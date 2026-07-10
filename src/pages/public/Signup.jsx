@@ -19,22 +19,39 @@ const Signup = () => {
     e.preventDefault();
     console.log("signup...");
     setIsSignuping(true);
+
+    const missingInput = Object.keys(signupForm).filter(
+      (key) => signupForm[key] === "",
+    );
+    if (missingInput.length) {
+      console.log(missingInput);
+      setIsSignuping(false);
+      if (missingInput[0] === "firstName" || missingInput[0] === "lastName") {
+        setErrorMessage("First name and last name are required.");
+        return;
+      }
+      setErrorMessage(`${missingInput[0]} is required.`);
+      return;
+    }
+
     const body = {
       ...signupForm,
     };
     try {
-      // const response = await authService.signup(body);
-      // console.log(response);
+      const response = await authService.signup(body);
       console.log(body);
-      await new Promise((_, reject) =>
-        setTimeout(() => reject("Promise rejected."), 1000),
-      );
       setIsSignuping(false);
+      console.log(response);
       navigate("/login");
     } catch (error) {
-      console.log(error);
+      console.log(error.response);
       setIsSignuping(false);
-      setErrorMessage(error);
+      if (error.response && error.response.status === 400) {
+        setErrorMessage(error.response.data.message);
+      }
+      if (error.response && error.response.status === 500) {
+        setErrorMessage("Something went wrong. Please try again.");
+      }
     }
   };
   const handleChange = (e) => {
@@ -58,7 +75,6 @@ const Signup = () => {
               value={signupForm.firstName}
               onChange={handleChange}
               placeholder="John"
-              required
             />
           </div>
           <div className="mb-2 block w-full">
@@ -70,7 +86,6 @@ const Signup = () => {
               value={signupForm.lastName}
               onChange={handleChange}
               placeholder="Doe"
-              required
             />
           </div>
         </div>
@@ -85,7 +100,6 @@ const Signup = () => {
             value={signupForm.email}
             onChange={handleChange}
             placeholder="name@flowbite.com"
-            required
           />
         </div>
         <div>
@@ -99,11 +113,14 @@ const Signup = () => {
             value={signupForm.password}
             onChange={handleChange}
             placeholder="******"
-            required
           />
         </div>
         <div className="flex justify-center">
-          {errorMessage && <p className="text-red-400">{errorMessage}</p>}
+          {errorMessage && (
+            <p className="text-red-400 first-letter:uppercase">
+              {errorMessage}
+            </p>
+          )}
         </div>
         <Button type="submit" className="cursor-pointer">
           {isSignuping ? (
