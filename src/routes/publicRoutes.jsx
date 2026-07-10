@@ -1,7 +1,7 @@
-import PublicLayout from "../components/layout/PublicLayout";
-import Home from "../pages/public/Home";
-import Login from "../pages/public/Login";
-import Signup from "../pages/public/Signup";
+import PublicLayout from "../components/layout/PublicLayout.jsx";
+import Home from "../pages/public/Home.jsx";
+import Login from "../pages/public/Login.jsx";
+import Signup from "../pages/public/Signup.jsx";
 
 const publicRoutes = [
   {

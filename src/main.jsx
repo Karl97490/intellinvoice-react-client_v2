@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import router from "./routes/Router.jsx";
+import router from "./routes/router.jsx";
 import { RouterProvider } from "react-router-dom";
 import { AuthProviderWrapper } from "./contexts/auth.context.jsx";
 import "./index.css";
