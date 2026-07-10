@@ -1,6 +1,8 @@
 import { Button, Label, TextInput } from "flowbite-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import authService from "../../services/auth.service";
+import validateRequiredFields from "../../utils/validateRequiredFields";
 
 const Login = () => {
   const [signinForm, setSigninForm] = useState({
@@ -13,7 +15,33 @@ const Login = () => {
   const [isRedirecting, setIsRedirecting] = useState(false);
   const navigate = useNavigate();
 
-  const handleSignIn = async (e) => {};
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+    console.log("signin process...");
+
+    const requiredInputs = validateRequiredFields(signinForm);
+    if (requiredInputs.length) {
+      setErrorMessage(`${requiredInputs[0]} is required.`);
+      return;
+    }
+
+    const body = {
+      ...signinForm,
+    };
+    console.log(body);
+    try {
+      const response = await authService.login(body);
+      console.log(response); // return auth token
+    } catch (error) {
+      console.log(error.response);
+      if (error.response && error.response.status === 400) {
+        setErrorMessage(error.response.data.message);
+      }
+      if (error.response && error.response.status === 500) {
+        setErrorMessage("Something went wrong. Please try again.");
+      }
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,7 +54,7 @@ const Login = () => {
   return (
     <>
       <h1>Login component</h1>
-      <form className="flex max-w-md flex-col gap-4" onSubmit={undefined}>
+      <form className="flex max-w-md flex-col gap-4" onSubmit={handleSignIn}>
         <div>
           <div className="mb-2 block">
             <Label htmlFor="email">Your email</Label>
@@ -54,7 +82,11 @@ const Login = () => {
           />
         </div>
         <div className="flex justify-center">
-          <p className="text-red-400 first-letter:uppercase">Error Message</p>
+          {errorMessage && (
+            <p className="text-red-400 first-letter:uppercase">
+              {errorMessage}
+            </p>
+          )}
         </div>
         <Button type="submit" className="cursor-pointer">
           Sign In
