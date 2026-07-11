@@ -1,8 +1,18 @@
-import { Textarea, TextInput, Label, Button, Spinner } from "flowbite-react";
+import {
+  Textarea,
+  TextInput,
+  Label,
+  Button,
+  Spinner,
+  Toast,
+} from "flowbite-react";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../../contexts/auth.context";
 import clientService from "../../../services/client.service";
 import validateRequiredFields from "../../../utils/validateRequiredFields";
+import { useNavigate } from "react-router-dom";
+import { Check } from "lucide-react";
+import delay from "../../../utils/delay";
 
 const CreateClient = () => {
   const [clientForm, setClientForm] = useState({
@@ -12,7 +22,10 @@ const CreateClient = () => {
     phone: "",
   });
   const [isCreating, setIsCreating] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [successToast, setSuccessToast] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -42,11 +55,15 @@ const CreateClient = () => {
     console.log(body);
     try {
       const response = await clientService.createClient(body);
-      setIsCreating(false);
       console.log(response);
-    } catch (error) {
       setIsCreating(false);
+      setSuccessToast(true);
+      setIsRedirecting(true);
+      await delay(2000);
+      navigate("/dashboard"); // change to AllClients page
+    } catch (error) {
       console.log(error.response);
+      setIsCreating(false);
       if (error.response && error.response.status === 400) {
         setErrorMessage(error.response.data.message);
       }
@@ -55,6 +72,27 @@ const CreateClient = () => {
       }
     }
   };
+
+  if (isRedirecting) {
+    return (
+      <>
+        {successToast && (
+          <Toast className="border border-gray-100 ">
+            <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
+              <Check size={14} />
+            </div>
+            <div className="ml-3 text-sm font-normal">
+              Save client sucessfully.
+            </div>
+          </Toast>
+        )}
+        <div className="mx-auto flex flex-col gap-2 items-center">
+          <Spinner aria-label="Redirecting loading spinner" size="xl" />
+          <span className="text-md">Redirecting...</span>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
