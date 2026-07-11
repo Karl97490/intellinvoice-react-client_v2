@@ -1,6 +1,26 @@
 import { Textarea, TextInput, Label, Button, Spinner } from "flowbite-react";
+import { useState } from "react";
 
 const CreateClient = () => {
+  const [clientForm, setClientForm] = useState({
+    name: "",
+    email: "",
+    address: "",
+    phone: "",
+  });
+  const [isCreating, setIsCreating] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setClientForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleCreateClient = (e) => {};
+
   return (
     <>
       <h1>CreateClient component</h1>
@@ -13,8 +33,8 @@ const CreateClient = () => {
             id="name"
             type="text"
             name="name"
-            value={undefined}
-            onChange={undefined}
+            value={clientForm.name}
+            onChange={handleChange}
             placeholder="John Doe"
           />
         </div>
@@ -26,8 +46,8 @@ const CreateClient = () => {
             id="email"
             type="email"
             name="email"
-            value={undefined}
-            onChange={undefined}
+            value={clientForm.email}
+            onChange={handleChange}
             placeholder="john.doe@mail.com"
           />
         </div>
@@ -38,8 +58,8 @@ const CreateClient = () => {
           <Textarea
             id="address"
             name="address"
-            value={undefined}
-            onChange={undefined}
+            value={clientForm.address}
+            onChange={handleChange}
             placeholder="Type your address..."
             rows={4}
           />
@@ -52,8 +72,8 @@ const CreateClient = () => {
             id="phone"
             name="phone"
             type="text"
-            value={undefined}
-            onChange={undefined}
+            value={clientForm.phone}
+            onChange={handleChange}
             placeholder="262-895-635"
           />
         </div>
