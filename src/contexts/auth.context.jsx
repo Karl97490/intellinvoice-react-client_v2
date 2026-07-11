@@ -21,7 +21,6 @@ const AuthProviderWrapper = (props) => {
     const token = localStorage.getItem("authToken");
     // Avoid to call the server
     if (!token) {
-      console.log("user not logged in");
       setIsLoading(false);
       setUser(null);
       setIsLoggedIn(false);
@@ -32,8 +31,7 @@ const AuthProviderWrapper = (props) => {
       setUser(response.data);
       setIsLoggedIn(true);
     } catch (error) {
-      console.log(error.response);
-      console.log("user not logged in");
+      // console.log(error.response);
       throw error;
       setIsLoading(false);
       setUser(null);
