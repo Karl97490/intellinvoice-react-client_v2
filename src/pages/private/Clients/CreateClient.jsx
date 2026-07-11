@@ -60,7 +60,7 @@ const CreateClient = () => {
       setSuccessToast(true);
       setIsRedirecting(true);
       await delay(2000);
-      navigate("/dashboard"); // change to AllClients page
+      navigate("/clients");
     } catch (error) {
       console.log(error.response);
       setIsCreating(false);
