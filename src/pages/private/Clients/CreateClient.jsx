@@ -2,6 +2,7 @@ import { Textarea, TextInput, Label, Button, Spinner } from "flowbite-react";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../../contexts/auth.context";
 import clientService from "../../../services/client.service";
+import validateRequiredFields from "../../../utils/validateRequiredFields";
 
 const CreateClient = () => {
   const [clientForm, setClientForm] = useState({
@@ -23,16 +24,35 @@ const CreateClient = () => {
 
   const handleCreateClient = async (e) => {
     e.preventDefault();
+    console.log("creating client...");
+    setIsCreating(true);
+
+    const requiredInputs = validateRequiredFields(clientForm);
+    if (requiredInputs.length) {
+      console.log(requiredInputs);
+      if (["name, address"].some((field) => requiredInputs.includes(field))) {
+        setErrorMessage("Name and address are required.");
+        return;
+      }
+    }
+
     const body = {
       ...clientForm,
     };
     console.log(body);
-    console.log("creating client...");
     try {
       const response = await clientService.createClient(body);
+      setIsCreating(false);
       console.log(response);
     } catch (error) {
+      setIsCreating(false);
       console.log(error.response);
+      if (error.response && error.response.status === 400) {
+        setErrorMessage(error.response.data.message);
+      }
+      if (error.response && error.response.status === 500) {
+        setErrorMessage("Something went wrong. Please try again.");
+      }
     }
   };
 
@@ -95,9 +115,22 @@ const CreateClient = () => {
             placeholder="262-895-635"
           />
         </div>
-        <div className="flex justify-center">Error message</div>
+        <div className="flex justify-center">
+          {errorMessage && (
+            <p className="text-red-400 first-letter:uppercase">
+              {errorMessage}
+            </p>
+          )}
+        </div>
         <Button type="submit" className="cursor-pointer">
-          Save Client
+          {isCreating ? (
+            <>
+              <Spinner aria-label="Spinner loading button" size="sm" />
+              <span className="pl-3">Saving...</span>
+            </>
+          ) : (
+            <>Save client</>
+          )}
         </Button>
       </form>
     </>
