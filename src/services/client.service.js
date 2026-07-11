@@ -13,6 +13,10 @@ class ClientService extends Service {
   createClient = (requestBody) => {
     return this.service.post(this.urlPrefixe + "/", requestBody);
   };
+
+  deleteClient = (id) => {
+    return this.service.delete(this.urlPrefixe + `/${id}`);
+  };
 }
 
 const clientService = new ClientService("/clients");
