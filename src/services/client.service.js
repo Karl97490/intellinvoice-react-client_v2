@@ -9,6 +9,10 @@ class ClientService extends Service {
   allClients = () => {
     return this.service.get(this.urlPrefixe + "/");
   };
+
+  createClient = (requestBody) => {
+    return this.service.post(this.urlPrefixe + "/", requestBody);
+  };
 }
 
 const clientService = new ClientService("/clients");

@@ -1,5 +1,7 @@
 import { Textarea, TextInput, Label, Button, Spinner } from "flowbite-react";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { AuthContext } from "../../../contexts/auth.context";
+import clientService from "../../../services/client.service";
 
 const CreateClient = () => {
   const [clientForm, setClientForm] = useState({
@@ -19,12 +21,28 @@ const CreateClient = () => {
     }));
   };
 
-  const handleCreateClient = (e) => {};
+  const handleCreateClient = async (e) => {
+    e.preventDefault();
+    const body = {
+      ...clientForm,
+    };
+    console.log(body);
+    console.log("creating client...");
+    try {
+      const response = await clientService.createClient(body);
+      console.log(response);
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
 
   return (
     <>
       <h1>CreateClient component</h1>
-      <form className="flex max-w-md flex-col gap-4" onSubmit={undefined}>
+      <form
+        className="flex max-w-md flex-col gap-4"
+        onSubmit={handleCreateClient}
+      >
         <div>
           <div className="mb-2 block">
             <Label htmlFor="name">Name</Label>
