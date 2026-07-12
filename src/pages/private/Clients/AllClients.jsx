@@ -1,11 +1,22 @@
 import { useEffect, useState } from "react";
 import clientService from "../../../services/client.service";
 import { useNavigate } from "react-router-dom";
-import { Spinner, Button } from "flowbite-react";
+import {
+  Spinner,
+  Button,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalFooter,
+  Label,
+  TextInput,
+  Textarea,
+} from "flowbite-react";
 
 const AllClients = () => {
   const [clients, setClients] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [openUpdateModal, setOpenUpdateModal] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -62,9 +73,83 @@ const AllClients = () => {
             >
               Delete
             </Button>
+            <Button
+              color="blue"
+              className="cursor-pointer"
+              onClick={() => setOpenUpdateModal(true)}
+            >
+              Edit
+            </Button>
           </div>
         );
       })}
+      <Modal show={openUpdateModal} onClose={() => setOpenUpdateModal(false)}>
+        <ModalHeader>Update form modal Client</ModalHeader>
+        <ModalBody>
+          <form className="flex flex-col gap-4" onSubmit={undefined}>
+            <div>
+              <div className="mb-2 block">
+                <Label htmlFor="name">Name</Label>
+              </div>
+              <TextInput
+                id="name"
+                type="text"
+                name="name"
+                value={undefined}
+                onChange={undefined}
+                placeholder="John Doe"
+              />
+            </div>
+            <div>
+              <div className="mb-2 block">
+                <Label htmlFor="email">Email</Label>
+              </div>
+              <TextInput
+                id="email"
+                type="email"
+                name="email"
+                value={undefined}
+                onChange={undefined}
+                placeholder="john.doe@mail.com"
+              />
+            </div>
+            <div>
+              <div className="mb-2 block">
+                <Label htmlFor="address">Address</Label>
+              </div>
+              <Textarea
+                id="address"
+                name="address"
+                value={undefined}
+                onChange={undefined}
+                placeholder="Type your address..."
+                rows={4}
+              />
+            </div>
+            <div>
+              <div className="mb-2 block">
+                <Label htmlFor="phone">Phone</Label>
+              </div>
+              <TextInput
+                id="phone"
+                name="phone"
+                type="text"
+                value={undefined}
+                onChange={undefined}
+                placeholder="262-895-635"
+              />
+            </div>
+            <div className="flex justify-center">
+              <p className="text-red-400 first-letter:uppercase">
+                Error Message
+              </p>
+            </div>
+            <Button type="submit" className="cursor-pointer">
+              Edit client
+            </Button>
+          </form>
+        </ModalBody>
+      </Modal>
     </>
   );
 };

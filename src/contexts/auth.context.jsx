@@ -32,10 +32,10 @@ const AuthProviderWrapper = (props) => {
       setIsLoggedIn(true);
     } catch (error) {
       // console.log(error.response);
-      throw error;
       setIsLoading(false);
       setUser(null);
       setIsLoggedIn(false);
+      throw error;
     }
   };
 
