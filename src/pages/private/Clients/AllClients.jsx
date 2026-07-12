@@ -61,7 +61,7 @@ const AllClients = () => {
     setIsLoading(true);
     try {
       const response = await clientService.getClient(id);
-      console.log(response);
+      setUpdateClientForm(response.data);
       setOpenUpdateModal(true);
       setIsLoading(false); // Update Loading method later - just disabling btn for e.g
     } catch (error) {
