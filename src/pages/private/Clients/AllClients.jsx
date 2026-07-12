@@ -23,27 +23,44 @@ const AllClients = () => {
     getData();
   }, []);
 
-  const handleDeleteClient = async (id) => {
-    console.log("deleting client with id: " + id);
-    try {
-      const response = await clientService.deleteClient(id);
-      console.log(response);
-      getData();
-    } catch (error) {
-      console.log(error.response);
-      // error message or toast
-    }
-  };
-
   const getData = async () => {
     try {
-      const response = await clientService.allClients();
+      const response = await clientService.getAllClients();
       console.log(response);
       setIsLoading(false);
       setClients(response.data);
     } catch (error) {
       console.log(error.response);
       // navigate("/error-page"); // Redirect to error-page
+    }
+  };
+
+  const handleOpenUpdateModalForm = async (id) => {
+    console.log("opening update modal client form with client id: " + id);
+    setIsLoading(true);
+    try {
+      const response = await clientService.getClient(id);
+      console.log(response);
+      setOpenUpdateModal(true);
+      setIsLoading(false); // Update Loading method later - just disabling btn for e.g
+    } catch (error) {
+      console.log(error.response);
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteClient = async (id) => {
+    console.log("deleting client with id: " + id);
+    setIsLoading(true);
+    try {
+      const response = await clientService.deleteClient(id);
+      console.log(response);
+      setIsLoading(false); // Update Loading method later - just disabling btn for e.g
+      getData();
+    } catch (error) {
+      console.log(error.response);
+      setIsLoading(false);
+      // error message or toast
     }
   };
 
@@ -76,7 +93,7 @@ const AllClients = () => {
             <Button
               color="blue"
               className="cursor-pointer"
-              onClick={() => setOpenUpdateModal(true)}
+              onClick={() => handleOpenUpdateModalForm(client._id)}
             >
               Edit
             </Button>
@@ -85,8 +102,8 @@ const AllClients = () => {
       })}
       <Modal show={openUpdateModal} onClose={() => setOpenUpdateModal(false)}>
         <ModalHeader>Update form modal Client</ModalHeader>
-        <ModalBody>
-          <form className="flex flex-col gap-4" onSubmit={undefined}>
+        <form className="" onSubmit={undefined}>
+          <ModalBody>
             <div>
               <div className="mb-2 block">
                 <Label htmlFor="name">Name</Label>
@@ -144,11 +161,22 @@ const AllClients = () => {
                 Error Message
               </p>
             </div>
-            <Button type="submit" className="cursor-pointer">
-              Edit client
-            </Button>
-          </form>
-        </ModalBody>
+          </ModalBody>
+          <ModalFooter>
+            <div className="w-full flex gap-x-2 justify-end">
+              <Button
+                className="cursor-pointer"
+                color="gray"
+                onClick={() => setOpenUpdateModal(false)}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" className="cursor-pointer" color="blue">
+                Edit client
+              </Button>
+            </div>
+          </ModalFooter>
+        </form>
       </Modal>
     </>
   );
