@@ -31,20 +31,21 @@ const Signup = () => {
     console.log("signup...");
     setIsSignuping(true);
 
-    const requiredInputs = validateRequiredFields(signupForm);
-    if (requiredInputs.length) {
-      console.log(requiredInputs);
+    const requiredFields = validateRequiredFields(signupForm);
+    if (requiredFields.length) {
       setIsSignuping(false);
       if (
-        requiredInputs[0] === "firstName" ||
-        requiredInputs[0] === "lastName"
+        ["firstName", "lastName"].some((field) =>
+          requiredFields.includes(field),
+        )
       ) {
         setErrorMessage("First name and last name are required.");
         return;
       }
-      setErrorMessage(`${requiredInputs[0]} is required.`);
+      setErrorMessage(`${requiredFields[0]} is required.`);
       return;
     }
+
     const body = {
       ...signupForm,
     };

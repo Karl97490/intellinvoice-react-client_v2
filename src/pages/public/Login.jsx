@@ -23,9 +23,11 @@ const Login = () => {
     e.preventDefault();
     console.log("signin process...");
     setIsLogging(true);
-    const requiredInputs = validateRequiredFields(signinForm);
-    if (requiredInputs.length) {
-      setErrorMessage(`${requiredInputs[0]} is required.`);
+
+    const requiredFields = validateRequiredFields(signinForm);
+    if (requiredFields.length) {
+      setIsLogging(false);
+      setErrorMessage(`${requiredFields[0]} is required.`);
       return;
     }
 

@@ -40,10 +40,10 @@ const CreateClient = () => {
     console.log("creating client...");
     setIsCreating(true);
 
-    const requiredInputs = validateRequiredFields(clientForm);
-    if (requiredInputs.length) {
-      console.log(requiredInputs);
-      if (["name, address"].some((field) => requiredInputs.includes(field))) {
+    const requiredFields = validateRequiredFields(clientForm);
+    if (requiredFields.length) {
+      setIsCreating(false);
+      if (["name", "address"].some((field) => requiredFields.includes(field))) {
         setErrorMessage("Name and address are required.");
         return;
       }
@@ -53,6 +53,7 @@ const CreateClient = () => {
       ...clientForm,
     };
     console.log(body);
+
     try {
       const response = await clientService.createClient(body);
       console.log(response);

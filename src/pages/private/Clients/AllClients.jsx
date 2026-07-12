@@ -12,10 +12,12 @@ import {
   TextInput,
   Textarea,
 } from "flowbite-react";
+import validateRequiredFields from "../../../utils/validateRequiredFields";
 
 const AllClients = () => {
   const [clients, setClients] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(false);
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
   const [updateClientForm, setUpdateClientForm] = useState({
     name: "",
@@ -23,6 +25,7 @@ const AllClients = () => {
     address: "",
     phone: "",
   });
+  const [errorMessage, setErrorMessage] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -66,6 +69,18 @@ const AllClients = () => {
   const handleUpdateClient = async (e, id) => {
     e.preventDefault();
     console.log("updating client with id: " + id);
+    setIsUpdating(true);
+
+    const requiredFields = validateRequiredFields(updateClientForm);
+    if (requiredFields.length) {
+      console.log(requiredFields);
+      setIsUpdating(false);
+      if (["name", "address"].some((field) => requiredFields.includes(field))) {
+        setErrorMessage("Name and address are required.");
+      }
+    }
+    console.log(requiredFields);
+
     const body = {
       ...updateClientForm,
     };
@@ -73,8 +88,16 @@ const AllClients = () => {
     try {
       const response = await clientService.updateClient(id, body);
       console.log(response);
+      setIsUpdating(false);
     } catch (error) {
       console.log(error.response);
+      setIsUpdating(false);
+      if (error.response && error.response.status === 400) {
+        setErrorMessage(error.response.data.message);
+      }
+      if (error.response && error.response.status === 500) {
+        setErrorMessage("Something went wrong. Please try again.");
+      }
     }
   };
 
@@ -189,9 +212,11 @@ const AllClients = () => {
                     />
                   </div>
                   <div className="flex justify-center">
-                    <p className="text-red-400 first-letter:uppercase">
-                      Error Message
-                    </p>
+                    {errorMessage && (
+                      <p className="text-red-400 first-letter:uppercase">
+                        {errorMessage}
+                      </p>
+                    )}
                   </div>
                 </ModalBody>
                 <ModalFooter>
@@ -200,6 +225,7 @@ const AllClients = () => {
                       className="cursor-pointer"
                       color="gray"
                       onClick={() => setOpenUpdateModal(false)}
+                      disabled={isUpdating}
                     >
                       Cancel
                     </Button>
@@ -207,8 +233,19 @@ const AllClients = () => {
                       type="submit"
                       className="cursor-pointer"
                       color="blue"
+                      disabled={isUpdating}
                     >
-                      Edit client
+                      {isUpdating ? (
+                        <>
+                          <Spinner
+                            aria-label="Updating loading spinner"
+                            size="sm"
+                          />
+                          <span className="pl-3">Editing...</span>
+                        </>
+                      ) : (
+                        <>Edit client</>
+                      )}
                     </Button>
                   </div>
                 </ModalFooter>
