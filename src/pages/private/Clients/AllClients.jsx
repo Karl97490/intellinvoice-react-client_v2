@@ -66,6 +66,16 @@ const AllClients = () => {
   const handleUpdateClient = async (e, id) => {
     e.preventDefault();
     console.log("updating client with id: " + id);
+    const body = {
+      ...updateClientForm,
+    };
+    console.log(body);
+    try {
+      const response = await clientService.updateClient(id, body);
+      console.log(response);
+    } catch (error) {
+      console.log(error.response);
+    }
   };
 
   const handleDeleteClient = async (id) => {

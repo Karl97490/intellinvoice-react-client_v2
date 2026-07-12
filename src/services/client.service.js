@@ -18,6 +18,10 @@ class ClientService extends Service {
     return this.service.post(this.urlPrefixe + "/", requestBody);
   };
 
+  updateClient = (id, requestBody) => {
+    return this.service.put(this.urlPrefixe + `/${id}`, requestBody);
+  };
+
   deleteClient = (id) => {
     return this.service.delete(this.urlPrefixe + `/${id}`);
   };
