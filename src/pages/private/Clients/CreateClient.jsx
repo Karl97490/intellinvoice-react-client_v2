@@ -83,7 +83,7 @@ const CreateClient = () => {
               <Check size={14} />
             </div>
             <div className="ml-3 text-sm font-normal">
-              Save client sucessfully.
+              Save client successfully.
             </div>
           </Toast>
         )}

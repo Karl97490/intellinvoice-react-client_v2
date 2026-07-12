@@ -11,13 +11,17 @@ import {
   Label,
   TextInput,
   Textarea,
+  Toast,
 } from "flowbite-react";
 import validateRequiredFields from "../../../utils/validateRequiredFields";
+import { Check } from "lucide-react";
+import delay from "../../../utils/delay";
 
 const AllClients = () => {
   const [clients, setClients] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [successToast, setSuccessToast] = useState(false);
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
   const [updateClientForm, setUpdateClientForm] = useState({
     name: "",
@@ -73,13 +77,11 @@ const AllClients = () => {
 
     const requiredFields = validateRequiredFields(updateClientForm);
     if (requiredFields.length) {
-      console.log(requiredFields);
       setIsUpdating(false);
       if (["name", "address"].some((field) => requiredFields.includes(field))) {
         setErrorMessage("Name and address are required.");
       }
     }
-    console.log(requiredFields);
 
     const body = {
       ...updateClientForm,
@@ -89,6 +91,11 @@ const AllClients = () => {
       const response = await clientService.updateClient(id, body);
       console.log(response);
       setIsUpdating(false);
+      setSuccessToast(true); // toggle success toast
+      setOpenUpdateModal(false); // close the modal after editing
+      await delay(1000);
+      setSuccessToast(false); // toggle success toast
+      getData(); // refresh the page with new data
     } catch (error) {
       console.log(error.response);
       setIsUpdating(false);
@@ -129,6 +136,16 @@ const AllClients = () => {
 
   return (
     <>
+      {successToast && (
+        <Toast className="border border-gray-100 ">
+          <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
+            <Check size={14} />
+          </div>
+          <div className="ml-3 text-sm font-normal">
+            Editing client successfully.
+          </div>
+        </Toast>
+      )}
       <h1>AllClients component...</h1>
       <span>{clients.length || "0"} clients</span>
       {clients.map((client) => {
