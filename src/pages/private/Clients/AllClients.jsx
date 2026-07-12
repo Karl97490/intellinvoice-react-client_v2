@@ -63,6 +63,11 @@ const AllClients = () => {
     }
   };
 
+  const handleUpdateClient = async (e, id) => {
+    e.preventDefault();
+    console.log("updating client with id: " + id);
+  };
+
   const handleDeleteClient = async (id) => {
     console.log("deleting client with id: " + id);
     setIsLoading(true);
@@ -111,87 +116,97 @@ const AllClients = () => {
             >
               Edit
             </Button>
+            <Modal
+              show={openUpdateModal}
+              onClose={() => setOpenUpdateModal(false)}
+            >
+              <ModalHeader>Update form modal Client</ModalHeader>
+              <form
+                className=""
+                onSubmit={(e) => handleUpdateClient(e, client._id)}
+              >
+                <ModalBody>
+                  <div>
+                    <div className="mb-2 block">
+                      <Label htmlFor="name">Name</Label>
+                    </div>
+                    <TextInput
+                      id="name"
+                      type="text"
+                      name="name"
+                      value={updateClientForm.name}
+                      onChange={handleChange}
+                      placeholder="John Doe"
+                    />
+                  </div>
+                  <div>
+                    <div className="mb-2 block">
+                      <Label htmlFor="email">Email</Label>
+                    </div>
+                    <TextInput
+                      id="email"
+                      type="email"
+                      name="email"
+                      value={updateClientForm.email}
+                      onChange={handleChange}
+                      placeholder="john.doe@mail.com"
+                    />
+                  </div>
+                  <div>
+                    <div className="mb-2 block">
+                      <Label htmlFor="address">Address</Label>
+                    </div>
+                    <Textarea
+                      id="address"
+                      name="address"
+                      value={updateClientForm.address}
+                      onChange={handleChange}
+                      placeholder="Type your address..."
+                      rows={4}
+                    />
+                  </div>
+                  <div>
+                    <div className="mb-2 block">
+                      <Label htmlFor="phone">Phone</Label>
+                    </div>
+                    <TextInput
+                      id="phone"
+                      name="phone"
+                      type="text"
+                      value={updateClientForm.phone}
+                      onChange={handleChange}
+                      placeholder="262-895-635"
+                    />
+                  </div>
+                  <div className="flex justify-center">
+                    <p className="text-red-400 first-letter:uppercase">
+                      Error Message
+                    </p>
+                  </div>
+                </ModalBody>
+                <ModalFooter>
+                  <div className="w-full flex gap-x-2 justify-end">
+                    <Button
+                      className="cursor-pointer"
+                      color="gray"
+                      onClick={() => setOpenUpdateModal(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      className="cursor-pointer"
+                      color="blue"
+                    >
+                      Edit client
+                    </Button>
+                  </div>
+                </ModalFooter>
+              </form>
+            </Modal>
           </div>
         );
       })}
-      <Modal show={openUpdateModal} onClose={() => setOpenUpdateModal(false)}>
-        <ModalHeader>Update form modal Client</ModalHeader>
-        <form className="" onSubmit={undefined}>
-          <ModalBody>
-            <div>
-              <div className="mb-2 block">
-                <Label htmlFor="name">Name</Label>
-              </div>
-              <TextInput
-                id="name"
-                type="text"
-                name="name"
-                value={updateClientForm.name}
-                onChange={handleChange}
-                placeholder="John Doe"
-              />
-            </div>
-            <div>
-              <div className="mb-2 block">
-                <Label htmlFor="email">Email</Label>
-              </div>
-              <TextInput
-                id="email"
-                type="email"
-                name="email"
-                value={updateClientForm.email}
-                onChange={handleChange}
-                placeholder="john.doe@mail.com"
-              />
-            </div>
-            <div>
-              <div className="mb-2 block">
-                <Label htmlFor="address">Address</Label>
-              </div>
-              <Textarea
-                id="address"
-                name="address"
-                value={updateClientForm.address}
-                onChange={handleChange}
-                placeholder="Type your address..."
-                rows={4}
-              />
-            </div>
-            <div>
-              <div className="mb-2 block">
-                <Label htmlFor="phone">Phone</Label>
-              </div>
-              <TextInput
-                id="phone"
-                name="phone"
-                type="text"
-                value={updateClientForm.phone}
-                onChange={handleChange}
-                placeholder="262-895-635"
-              />
-            </div>
-            <div className="flex justify-center">
-              <p className="text-red-400 first-letter:uppercase">
-                Error Message
-              </p>
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <div className="w-full flex gap-x-2 justify-end">
-              <Button
-                className="cursor-pointer"
-                color="gray"
-                onClick={() => setOpenUpdateModal(false)}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" className="cursor-pointer" color="blue">
-                Edit client
-              </Button>
-            </div>
-          </ModalFooter>
-        </form>
-      </Modal>
     </>
   );
 };
