@@ -17,6 +17,12 @@ const AllClients = () => {
   const [clients, setClients] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
+  const [updateClientForm, setUpdateClientForm] = useState({
+    name: "",
+    email: "",
+    address: "",
+    phone: "",
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,6 +39,14 @@ const AllClients = () => {
       console.log(error.response);
       // navigate("/error-page"); // Redirect to error-page
     }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUpdateClientForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleOpenUpdateModalForm = async (id) => {
@@ -112,8 +126,8 @@ const AllClients = () => {
                 id="name"
                 type="text"
                 name="name"
-                value={undefined}
-                onChange={undefined}
+                value={updateClientForm.name}
+                onChange={handleChange}
                 placeholder="John Doe"
               />
             </div>
@@ -125,8 +139,8 @@ const AllClients = () => {
                 id="email"
                 type="email"
                 name="email"
-                value={undefined}
-                onChange={undefined}
+                value={updateClientForm.email}
+                onChange={handleChange}
                 placeholder="john.doe@mail.com"
               />
             </div>
@@ -137,8 +151,8 @@ const AllClients = () => {
               <Textarea
                 id="address"
                 name="address"
-                value={undefined}
-                onChange={undefined}
+                value={updateClientForm.address}
+                onChange={handleChange}
                 placeholder="Type your address..."
                 rows={4}
               />
@@ -151,8 +165,8 @@ const AllClients = () => {
                 id="phone"
                 name="phone"
                 type="text"
-                value={undefined}
-                onChange={undefined}
+                value={updateClientForm.phone}
+                onChange={handleChange}
                 placeholder="262-895-635"
               />
             </div>
