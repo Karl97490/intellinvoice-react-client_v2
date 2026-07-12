@@ -6,8 +6,8 @@ class ClientService extends Service {
     this.urlPrefixe = "/api" + urlPrefixe;
   }
 
-  getAllClients = () => {
-    return this.service.get(this.urlPrefixe + "/");
+  getAllClients = (search) => {
+    return this.service.get(this.urlPrefixe + "/", { params: { search } });
   };
 
   getClient = (id) => {

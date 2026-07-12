@@ -29,6 +29,7 @@ const AllClients = () => {
     address: "",
     phone: "",
   });
+  const [searchQuery, setSearchQuery] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
   const navigate = useNavigate();
 
@@ -38,7 +39,8 @@ const AllClients = () => {
 
   const getData = async () => {
     try {
-      const response = await clientService.getAllClients();
+      console.log(searchQuery);
+      const response = await clientService.getAllClients(searchQuery);
       console.log(response);
       setIsLoading(false);
       setClients(response.data);
@@ -50,6 +52,10 @@ const AllClients = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (name === "search") {
+      setSearchQuery(value);
+      return;
+    }
     setUpdateClientForm((prev) => ({
       ...prev,
       [name]: value,
@@ -148,6 +154,14 @@ const AllClients = () => {
       )}
       <h1>AllClients component...</h1>
       <span>{clients.length || "0"} clients</span>
+      <TextInput
+        className="w-100"
+        placeholder="search"
+        name="search"
+        type="text"
+        value={searchQuery}
+        onChange={handleChange}
+      />
       {clients.map((client) => {
         return (
           <div key={client._id}>
