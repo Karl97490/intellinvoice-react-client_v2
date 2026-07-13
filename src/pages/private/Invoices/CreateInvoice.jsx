@@ -6,8 +6,81 @@ import {
   Datepicker,
   Button,
 } from "flowbite-react";
+import { useState } from "react";
 
 const CreateInvoice = () => {
+  const [createClientForm, setCreateClientForm] = useState({
+    owner: {
+      name: "",
+      email: "",
+      address: "",
+      phone: "",
+    },
+    client: {
+      name: "",
+      email: "",
+      address: "",
+      phone: "",
+    },
+    items: [
+      {
+        title: "",
+        quantity: 1,
+        taxRate: 2.5,
+        unitPrice: 0,
+      },
+    ],
+    status: "pending",
+    issuedDate: new Date(),
+    dueDate: new Date(),
+    taxRate: 2.5,
+    notes: "",
+  });
+
+  const handleChange = (e, itemIndex, date, dateField) => {
+    if (date && dateField) {
+      setCreateClientForm((prev) => ({
+        ...prev,
+        [dateField]: date,
+      }));
+      return;
+    }
+
+    const { name, value } = e.target;
+    const section = e.target.dataset.section;
+
+    if (section && (section === "client" || section === "owner")) {
+      setCreateClientForm((prev) => ({
+        ...prev,
+        [section]: {
+          ...prev[section],
+          [name]: value,
+        },
+      }));
+      return;
+    }
+
+    if (section && section === "items") {
+      setCreateClientForm((prev) => ({
+        ...prev,
+        items: prev.items.map((item, index) =>
+          index === itemIndex
+            ? {
+                ...item,
+                [name]: value,
+              }
+            : item,
+        ),
+      }));
+      return;
+    }
+
+    setCreateClientForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   return (
     <>
       <h1>CreateInvoice component</h1>
@@ -24,8 +97,7 @@ const CreateInvoice = () => {
               id="invoiceNumber"
               type="text"
               name="invoiceNumber"
-              value={undefined}
-              onChange={undefined}
+              value="INV-001" // Will be display the nextInvoiceNumber counter value of the User
               disabled
             />
           </div>
@@ -37,13 +109,13 @@ const CreateInvoice = () => {
               className="w-30"
               id="status"
               name="status"
-              value={undefined}
-              onChange={undefined}
+              value={createClientForm.status}
+              onChange={handleChange}
             >
-              <option value="">Unpaid</option>
-              <option value="">Pending</option>
-              <option value="">Overdue</option>
-              <option value="">Paid</option>
+              <option value="pending">Pending</option>
+              <option value="unpaid">Unpaid</option>
+              <option value="overdue">Overdue</option>
+              <option value="paid">Paid</option>
             </Select>
           </div>
           <div>
@@ -52,9 +124,8 @@ const CreateInvoice = () => {
             </div>
             <Datepicker
               id="issuedDate"
-              name="issuedDate"
-              value={undefined}
-              onChange={undefined}
+              value={createClientForm.issuedDate}
+              onChange={(date) => handleChange(null, null, date, "issuedDate")}
             />
           </div>
           <div>
@@ -63,9 +134,8 @@ const CreateInvoice = () => {
             </div>
             <Datepicker
               id="dueDate"
-              name="dueDate"
-              value={undefined}
-              onChange={undefined}
+              value={createClientForm.dueDate}
+              onChange={(date) => handleChange(null, null, date, "dueDate")}
             />
           </div>
           <div>
@@ -79,8 +149,8 @@ const CreateInvoice = () => {
               name="taxRate"
               min={0}
               step={0.1}
-              value={undefined}
-              onChange={undefined}
+              value={createClientForm.taxRate}
+              onChange={handleChange}
             />
           </div>
         </div>
@@ -96,8 +166,8 @@ const CreateInvoice = () => {
                 name="name"
                 type="text"
                 data-section="owner"
-                value={undefined}
-                onChange={undefined}
+                value={createClientForm.owner.name}
+                onChange={handleChange}
                 placeholder="John Doe"
               />
             </div>
@@ -110,8 +180,8 @@ const CreateInvoice = () => {
                 name="email"
                 type="text"
                 data-section="owner"
-                value={undefined}
-                onChange={undefined}
+                value={createClientForm.owner.email}
+                onChange={handleChange}
                 placeholder="john.doe@email.com"
               />
             </div>
@@ -123,8 +193,8 @@ const CreateInvoice = () => {
                 id="owner-address"
                 name="address"
                 data-section="owner"
-                value={undefined}
-                onChange={undefined}
+                value={createClientForm.owner.address}
+                onChange={handleChange}
                 rows={4}
               />
             </div>
@@ -137,8 +207,8 @@ const CreateInvoice = () => {
                 name="phone"
                 type="text"
                 data-section="owner"
-                value={undefined}
-                onChange={undefined}
+                value={createClientForm.owner.phone}
+                onChange={handleChange}
                 placeholder="262-895-635"
               />
             </div>
@@ -154,8 +224,8 @@ const CreateInvoice = () => {
                 name="name"
                 type="text"
                 data-section="client"
-                value={undefined}
-                onChange={undefined}
+                value={createClientForm.client.name}
+                onChange={handleChange}
                 placeholder="Alex Doe"
               />
             </div>
@@ -168,8 +238,8 @@ const CreateInvoice = () => {
                 name="email"
                 type="text"
                 data-section="client"
-                value={undefined}
-                onChange={undefined}
+                value={createClientForm.client.email}
+                onChange={handleChange}
                 placeholder="alex.doe@email.com"
               />
             </div>
@@ -181,8 +251,8 @@ const CreateInvoice = () => {
                 id="client-address"
                 name="address"
                 data-section="client"
-                value={undefined}
-                onChange={undefined}
+                value={createClientForm.client.address}
+                onChange={handleChange}
                 rows={4}
               />
             </div>
@@ -195,8 +265,8 @@ const CreateInvoice = () => {
                 name="phone"
                 type="text"
                 data-section="client"
-                value={undefined}
-                onChange={undefined}
+                value={createClientForm.client.phone}
+                onChange={handleChange}
                 placeholder="569-235-489"
               />
             </div>
@@ -204,68 +274,80 @@ const CreateInvoice = () => {
         </div>
         <div className="flex flex-col gap-y-2">
           <h2>Items</h2>
-          <div className="flex justify-between items-center">
-            <div>
-              <div className="mb-2 block">
-                <Label htmlFor="title">Title</Label>
+          {createClientForm.items.map((item, id) => {
+            return (
+              <div key={id} className="flex justify-between items-center">
+                <div>
+                  <div className="mb-2 block">
+                    <Label htmlFor="items-title">Title</Label>
+                  </div>
+                  <TextInput
+                    id="items-title"
+                    name="title"
+                    type="text"
+                    data-section="items"
+                    value={item.title}
+                    onChange={(e) => handleChange(e, id)}
+                  />
+                </div>
+                <div>
+                  <div className="mb-2 block">
+                    <Label htmlFor="items-quantity">Quantity</Label>
+                  </div>
+                  <TextInput
+                    className="w-25"
+                    id="items-quantity"
+                    name="quantity"
+                    type="number"
+                    data-section="items"
+                    value={item.quantity}
+                    onChange={(e) => handleChange(e, id)}
+                  />
+                </div>
+                <div>
+                  <div className="mb-2 block">
+                    <Label htmlFor="items-taxRate">Tax Rate (%)</Label>
+                  </div>
+                  <TextInput
+                    className="w-25"
+                    id="items-taxRate"
+                    name="taxRate"
+                    type="number"
+                    data-section="items"
+                    value={item.taxRate}
+                    onChange={(e) => handleChange(e, id)}
+                    disabled
+                  />
+                </div>
+                <div>
+                  <div className="mb-2 block">
+                    <Label htmlFor="items-unitPrice">Unit Price</Label>
+                  </div>
+                  <TextInput
+                    id="items-unitPrice"
+                    name="unitPrice"
+                    type="number"
+                    data-section="items"
+                    value={item.unitPrice}
+                    onChange={(e) => handleChange(e, id)}
+                  />
+                </div>
+                <div>
+                  <div className="mb-2 block">Total</div>
+                  <span>$0</span>
+                </div>
+                <div>
+                  <Button
+                    color="red"
+                    className="cursor-pointer"
+                    onClick={undefined}
+                  >
+                    Delete
+                  </Button>
+                </div>
               </div>
-              <TextInput
-                id="title"
-                name="title"
-                type="text"
-                value={undefined}
-                onChange={undefined}
-              />
-            </div>
-            <div>
-              <div className="mb-2 block">
-                <Label htmlFor="quantity">Quantity</Label>
-              </div>
-              <TextInput
-                className="w-25"
-                id="quantity"
-                name="quantity"
-                type="number"
-                value={undefined}
-                onChange={undefined}
-              />
-            </div>
-            <div>
-              <div className="mb-2 block">
-                <Label htmlFor="taxRate">Tax Rate (%)</Label>
-              </div>
-              <TextInput
-                className="w-25"
-                id="taxRate"
-                name="taxRate"
-                type="number"
-                value={undefined}
-                onChange={undefined}
-                disabled
-              />
-            </div>
-            <div>
-              <div className="mb-2 block">
-                <Label htmlFor="unitPrice">Unit Price</Label>
-              </div>
-              <TextInput
-                id="unitPrice"
-                name="unitPrice"
-                type="number"
-                value={undefined}
-                onChange={undefined}
-              />
-            </div>
-            <div>
-              <div className="mb-2 block">Total</div>
-              <span>$0</span>
-            </div>
-            <div>
-              <Button color="red" className="cursor-pointer">
-                Delete
-              </Button>
-            </div>
-          </div>
+            );
+          })}
         </div>
         <div className="flex justify-between">
           <div className="flex-1">
@@ -275,8 +357,8 @@ const CreateInvoice = () => {
             <Textarea
               id="notes"
               name="notes"
-              value={undefined}
-              onChange={undefined}
+              value={createClientForm.notes}
+              onChange={handleChange}
               rows={4}
             />
           </div>
