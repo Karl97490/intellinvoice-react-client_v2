@@ -8,13 +8,14 @@ import {
   Spinner,
   Toast,
 } from "flowbite-react";
-import { use, useState, useMemo } from "react";
+import { use, useState, useMemo, useContext } from "react";
 import invoiceService from "../../../services/invoice.service";
 import validateRequiredFields from "../../../utils/validateRequiredFields";
 import delay from "../../../utils/delay";
 import { useNavigate } from "react-router-dom";
 import { Check } from "lucide-react";
 import calculateInvoiceTotals from "../../../utils/calculateInvoiceTotals";
+import { AuthContext } from "../../../contexts/auth.context";
 
 const CreateInvoice = () => {
   const [createClientForm, setCreateClientForm] = useState({
@@ -60,6 +61,7 @@ const CreateInvoice = () => {
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [successToast, setSuccessToast] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const totals = useMemo(() => {
@@ -228,7 +230,7 @@ const CreateInvoice = () => {
               id="invoiceNumber"
               type="text"
               name="invoiceNumber"
-              value="INV-001" // Will be display the nextInvoiceNumber counter value of the User
+              value={`INV-${String(user?.invoices?.nextInvoiceNumber).padStart(3, "0")}`}
               disabled
             />
           </div>

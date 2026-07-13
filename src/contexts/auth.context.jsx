@@ -43,6 +43,7 @@ const AuthProviderWrapper = (props) => {
     storeToken,
     authenticateUser,
     isLoggedIn,
+    user,
   };
 
   if (isLoading) {
