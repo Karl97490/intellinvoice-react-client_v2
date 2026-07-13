@@ -8,6 +8,7 @@ import {
 } from "flowbite-react";
 import { useState } from "react";
 import invoiceService from "../../../services/invoice.service";
+import validateRequiredFields from "../../../utils/validateRequiredFields";
 
 const CreateInvoice = () => {
   const [createClientForm, setCreateClientForm] = useState({
@@ -37,6 +38,7 @@ const CreateInvoice = () => {
     taxRate: 2.5,
     notes: "",
   });
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const handleChange = (e, itemIndex, date, dateField) => {
     if (date && dateField) {
@@ -85,6 +87,36 @@ const CreateInvoice = () => {
   const handleCreateInvoice = async (e) => {
     e.preventDefault();
     console.log("Creating new invoice...");
+
+    const requiredFieldsOwner = validateRequiredFields(createClientForm.owner);
+    const requiredFieldsClient = validateRequiredFields(
+      createClientForm.client,
+    );
+    if (requiredFieldsOwner.length) {
+      if (
+        ["name", "address"].some((field) => requiredFieldsOwner.includes(field))
+      ) {
+        setErrorMessage("Owner name and address are required.");
+        return;
+      }
+    }
+    if (requiredFieldsClient.length) {
+      if (
+        ["name", "address"].some((field) =>
+          requiredFieldsClient.includes(field),
+        )
+      ) {
+        setErrorMessage("Client name and address are required.");
+        return;
+      }
+    }
+
+    if (createClientForm.items.some((item) => !item.title.trim())) {
+      console.log("error handling triggered...");
+      setErrorMessage("Each item must have a title.");
+      return;
+    }
+
     const body = {
       ...createClientForm,
     };
@@ -94,6 +126,12 @@ const CreateInvoice = () => {
       console.log(response);
     } catch (error) {
       console.log(error.response);
+      if (error.response && error.response.status === 400) {
+        setErrorMessage(error.response.data.message);
+      }
+      if (error.response && error.response.status === 500) {
+        setErrorMessage("Something went wrong. Please try again");
+      }
     }
   };
 
@@ -394,7 +432,11 @@ const CreateInvoice = () => {
           </div>
         </div>
         <div className="flex justify-center">
-          <p className="text-red-400 first-letter:uppercase">Error Message</p>
+          {errorMessage && (
+            <p className="text-red-400 first-letter:uppercase">
+              {errorMessage}
+            </p>
+          )}
         </div>
         <Button type="submit" className="cursor-pointer">
           Save Invoice
