@@ -7,6 +7,7 @@ import {
   Button,
 } from "flowbite-react";
 import { useState } from "react";
+import invoiceService from "../../../services/invoice.service";
 
 const CreateInvoice = () => {
   const [createClientForm, setCreateClientForm] = useState({
@@ -81,12 +82,27 @@ const CreateInvoice = () => {
     }));
   };
 
+  const handleCreateInvoice = async (e) => {
+    e.preventDefault();
+    console.log("Creating new invoice...");
+    const body = {
+      ...createClientForm,
+    };
+    try {
+      console.log(body);
+      const response = await invoiceService.createInvoice(body);
+      console.log(response);
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
   return (
     <>
       <h1>CreateInvoice component</h1>
       <form
         className="flex max-w-screen px-10 flex-col gap-y-8"
-        onSubmit={undefined}
+        onSubmit={handleCreateInvoice}
       >
         <div className="flex justify-between">
           <div>
