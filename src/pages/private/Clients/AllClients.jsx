@@ -16,6 +16,7 @@ import {
 import validateRequiredFields from "../../../utils/validateRequiredFields";
 import { Check } from "lucide-react";
 import delay from "../../../utils/delay";
+import useDebounce from "../../../hooks/useDebounce";
 
 const AllClients = () => {
   const [clients, setClients] = useState(null);
@@ -30,17 +31,18 @@ const AllClients = () => {
     phone: "",
   });
   const [searchQuery, setSearchQuery] = useState("");
+  const searchQueryDebounced = useDebounce(searchQuery);
   const [errorMessage, setErrorMessage] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [searchQueryDebounced]);
 
   const getData = async () => {
     try {
-      console.log(searchQuery);
-      const response = await clientService.getAllClients(searchQuery);
+      console.log(searchQueryDebounced);
+      const response = await clientService.getAllClients(searchQueryDebounced);
       console.log(response);
       setIsLoading(false);
       setClients(response.data);
