@@ -41,9 +41,7 @@ const AllClients = () => {
 
   const getData = async () => {
     try {
-      console.log(searchQueryDebounced);
       const response = await clientService.getAllClients(searchQueryDebounced);
-      console.log(response);
       setIsLoading(false);
       setClients(response.data);
     } catch (error) {
@@ -65,7 +63,6 @@ const AllClients = () => {
   };
 
   const handleOpenUpdateModalForm = async (id) => {
-    console.log("opening update modal client form with client id: " + id);
     setIsLoading(true);
     try {
       const response = await clientService.getClient(id);
@@ -80,7 +77,6 @@ const AllClients = () => {
 
   const handleUpdateClient = async (e, id) => {
     e.preventDefault();
-    console.log("updating client with id: " + id);
     setIsUpdating(true);
 
     const requiredFields = validateRequiredFields(updateClientForm);
@@ -94,10 +90,8 @@ const AllClients = () => {
     const body = {
       ...updateClientForm,
     };
-    console.log(body);
     try {
       const response = await clientService.updateClient(id, body);
-      console.log(response);
       setIsUpdating(false);
       setSuccessToast(true); // toggle success toast
       setOpenUpdateModal(false); // close the modal after editing
@@ -117,11 +111,9 @@ const AllClients = () => {
   };
 
   const handleDeleteClient = async (id) => {
-    console.log("deleting client with id: " + id);
     setIsLoading(true);
     try {
       const response = await clientService.deleteClient(id);
-      console.log(response);
       setIsLoading(false); // Update Loading method later - just disabling btn for e.g
       getData();
     } catch (error) {
