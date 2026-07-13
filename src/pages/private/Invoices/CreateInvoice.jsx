@@ -5,10 +5,15 @@ import {
   Select,
   Datepicker,
   Button,
+  Spinner,
+  Toast,
 } from "flowbite-react";
-import { useState } from "react";
+import { use, useState } from "react";
 import invoiceService from "../../../services/invoice.service";
 import validateRequiredFields from "../../../utils/validateRequiredFields";
+import delay from "../../../utils/delay";
+import { useNavigate } from "react-router-dom";
+import { Check } from "lucide-react";
 
 const CreateInvoice = () => {
   const [createClientForm, setCreateClientForm] = useState({
@@ -38,7 +43,11 @@ const CreateInvoice = () => {
     taxRate: 2.5,
     notes: "",
   });
+  const [isCreating, setIsCreating] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [successToast, setSuccessToast] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
+  const navigate = useNavigate();
 
   const handleChange = (e, itemIndex, date, dateField) => {
     if (date && dateField) {
@@ -87,12 +96,14 @@ const CreateInvoice = () => {
   const handleCreateInvoice = async (e) => {
     e.preventDefault();
     console.log("Creating new invoice...");
+    setIsCreating(true);
 
     const requiredFieldsOwner = validateRequiredFields(createClientForm.owner);
     const requiredFieldsClient = validateRequiredFields(
       createClientForm.client,
     );
     if (requiredFieldsOwner.length) {
+      setIsCreating(false);
       if (
         ["name", "address"].some((field) => requiredFieldsOwner.includes(field))
       ) {
@@ -101,6 +112,7 @@ const CreateInvoice = () => {
       }
     }
     if (requiredFieldsClient.length) {
+      setIsCreating(false);
       if (
         ["name", "address"].some((field) =>
           requiredFieldsClient.includes(field),
@@ -112,7 +124,7 @@ const CreateInvoice = () => {
     }
 
     if (createClientForm.items.some((item) => !item.title.trim())) {
-      console.log("error handling triggered...");
+      setIsCreating(false);
       setErrorMessage("Each item must have a title.");
       return;
     }
@@ -120,12 +132,18 @@ const CreateInvoice = () => {
     const body = {
       ...createClientForm,
     };
+    console.log(body);
     try {
-      console.log(body);
       const response = await invoiceService.createInvoice(body);
       console.log(response);
+      setIsCreating(false);
+      setSuccessToast(true);
+      setIsRedirecting(true);
+      await delay(2000);
+      navigate("/clients"); // Change to Invoice Details page
     } catch (error) {
       console.log(error.response);
+      setIsCreating(false);
       if (error.response && error.response.status === 400) {
         setErrorMessage(error.response.data.message);
       }
@@ -134,6 +152,27 @@ const CreateInvoice = () => {
       }
     }
   };
+
+  if (isRedirecting) {
+    return (
+      <>
+        {successToast && (
+          <Toast className="border border-gray-100">
+            <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
+              <Check size={14} />
+            </div>
+            <div className="ml-3 text-sm font-normal">
+              Save invoice successfully.
+            </div>
+          </Toast>
+        )}
+        <div className="mx-auto flex flex-col gap-2 items-center">
+          <Spinner aria-label="Redirecting loading spinner" size="xl" />
+          <span className="text-md">Redirecting...</span>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -439,7 +478,14 @@ const CreateInvoice = () => {
           )}
         </div>
         <Button type="submit" className="cursor-pointer">
-          Save Invoice
+          {isCreating ? (
+            <>
+              <Spinner aria-label="Saving loading spinner" size="sm" />
+              <span className="pl-3">Saving...</span>
+            </>
+          ) : (
+            <>Save invoice</>
+          )}
         </Button>
       </form>
     </>
