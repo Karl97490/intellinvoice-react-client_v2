@@ -8,12 +8,13 @@ import {
   Spinner,
   Toast,
 } from "flowbite-react";
-import { use, useState } from "react";
+import { use, useState, useMemo } from "react";
 import invoiceService from "../../../services/invoice.service";
 import validateRequiredFields from "../../../utils/validateRequiredFields";
 import delay from "../../../utils/delay";
 import { useNavigate } from "react-router-dom";
 import { Check } from "lucide-react";
+import calculateInvoiceTotals from "../../../utils/calculateInvoiceTotals";
 
 const CreateInvoice = () => {
   const [createClientForm, setCreateClientForm] = useState({
@@ -36,6 +37,12 @@ const CreateInvoice = () => {
         taxRate: 2.5,
         unitPrice: 0,
       },
+      {
+        title: "",
+        quantity: 1,
+        taxRate: 2.5,
+        unitPrice: 0,
+      },
     ],
     status: "pending",
     issuedDate: new Date(),
@@ -49,6 +56,13 @@ const CreateInvoice = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const navigate = useNavigate();
 
+  const totals = useMemo(() => {
+    return calculateInvoiceTotals(
+      createClientForm.items,
+      createClientForm.taxRate,
+    );
+  }, [createClientForm.items, createClientForm.taxRate]);
+
   const handleChange = (e, itemIndex, date, dateField) => {
     if (date && dateField) {
       setCreateClientForm((prev) => ({
@@ -60,6 +74,17 @@ const CreateInvoice = () => {
 
     const { name, value } = e.target;
     const section = e.target.dataset.section;
+
+    if (name === "taxRate") {
+      setCreateClientForm((prev) => ({
+        ...prev,
+        [name]: value,
+        items: prev.items.map((item) => ({
+          ...prev.items,
+          [name]: value,
+        })),
+      }));
+    }
 
     if (section && (section === "client" || section === "owner")) {
       setCreateClientForm((prev) => ({
@@ -393,6 +418,7 @@ const CreateInvoice = () => {
                     name="quantity"
                     type="number"
                     data-section="items"
+                    step={1}
                     value={item.quantity}
                     onChange={(e) => handleChange(e, id)}
                   />
@@ -427,7 +453,7 @@ const CreateInvoice = () => {
                 </div>
                 <div>
                   <div className="mb-2 block">Total</div>
-                  <span>$0</span>
+                  <span>${item.quantity * item.unitPrice || "0"}</span>
                 </div>
                 <div>
                   <Button
@@ -457,16 +483,22 @@ const CreateInvoice = () => {
           </div>
           <div className="flex flex-col gap-y-3 items-center flex-1">
             <div>
-              Tax Rate (%)<span className="ml-2">0%</span>
+              Tax Rate (%)
+              <span className="ml-2">{createClientForm.taxRate || "0"}%</span>
             </div>
             <div>
-              Tax Amount<span className="ml-2">$0</span>
+              Tax Amount
+              <span className="ml-2">
+                ${totals.taxAmount.toFixed(1) || "0"}
+              </span>
             </div>
             <div>
-              Sub Total<span className="ml-2">$0</span>
+              Sub Total
+              <span className="ml-2">${totals.subTotal.toFixed(1) || "0"}</span>
             </div>
             <div>
-              Total<span className="ml-2">$0</span>
+              Total
+              <span className="ml-2">${totals.total.toFixed(1) || "0"}</span>
             </div>
           </div>
         </div>
