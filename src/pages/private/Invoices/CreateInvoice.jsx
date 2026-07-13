@@ -32,13 +32,19 @@ const CreateInvoice = () => {
     },
     items: [
       {
-        title: "",
+        title: "Test 1",
         quantity: 1,
         taxRate: 2.5,
         unitPrice: 0,
       },
       {
-        title: "",
+        title: "Test 2",
+        quantity: 1,
+        taxRate: 2.5,
+        unitPrice: 0,
+      },
+      {
+        title: "Test 3",
         quantity: 1,
         taxRate: 2.5,
         unitPrice: 0,
@@ -176,6 +182,13 @@ const CreateInvoice = () => {
         setErrorMessage("Something went wrong. Please try again");
       }
     }
+  };
+
+  const handleDeleteItem = (itemId) => {
+    setCreateClientForm((prev) => ({
+      ...prev,
+      items: prev.items.toSpliced(itemId, 1),
+    }));
   };
 
   if (isRedirecting) {
@@ -459,7 +472,7 @@ const CreateInvoice = () => {
                   <Button
                     color="red"
                     className="cursor-pointer"
-                    onClick={undefined}
+                    onClick={() => handleDeleteItem(id)}
                   >
                     Delete
                   </Button>
