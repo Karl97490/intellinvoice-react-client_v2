@@ -230,7 +230,7 @@ const CreateInvoice = () => {
               id="invoiceNumber"
               type="text"
               name="invoiceNumber"
-              value={`INV-${String(user?.invoices?.nextInvoiceNumber).padStart(3, "0")}`}
+              value={`INV-${String(user.invoices.nextInvoiceNumber).padStart(3, "0")}`}
               disabled
             />
           </div>
