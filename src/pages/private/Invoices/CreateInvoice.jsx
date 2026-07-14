@@ -18,7 +18,7 @@ import calculateInvoiceTotals from "../../../utils/calculateInvoiceTotals";
 import { AuthContext } from "../../../contexts/auth.context";
 
 const CreateInvoice = () => {
-  const [createClientForm, setCreateClientForm] = useState({
+  const [createInvoiceForm, setCreateInvoiceForm] = useState({
     owner: {
       name: "",
       email: "",
@@ -66,14 +66,14 @@ const CreateInvoice = () => {
 
   const totals = useMemo(() => {
     return calculateInvoiceTotals(
-      createClientForm.items,
-      createClientForm.taxRate,
+      createInvoiceForm.items,
+      createInvoiceForm.taxRate,
     );
-  }, [createClientForm.items, createClientForm.taxRate]);
+  }, [createInvoiceForm.items, createInvoiceForm.taxRate]);
 
   const handleChange = (e, itemIndex, date, dateField) => {
     if (date && dateField) {
-      setCreateClientForm((prev) => ({
+      setCreateInvoiceForm((prev) => ({
         ...prev,
         [dateField]: date,
       }));
@@ -84,7 +84,7 @@ const CreateInvoice = () => {
     const section = e.target.dataset.section;
 
     if (name === "taxRate") {
-      setCreateClientForm((prev) => ({
+      setCreateInvoiceForm((prev) => ({
         ...prev,
         [name]: value,
         items: prev.items.map((item) => ({
@@ -95,7 +95,7 @@ const CreateInvoice = () => {
     }
 
     if (section && (section === "client" || section === "owner")) {
-      setCreateClientForm((prev) => ({
+      setCreateInvoiceForm((prev) => ({
         ...prev,
         [section]: {
           ...prev[section],
@@ -106,7 +106,7 @@ const CreateInvoice = () => {
     }
 
     if (section && section === "items") {
-      setCreateClientForm((prev) => ({
+      setCreateInvoiceForm((prev) => ({
         ...prev,
         items: prev.items.map((item, index) =>
           index === itemIndex
@@ -120,7 +120,7 @@ const CreateInvoice = () => {
       return;
     }
 
-    setCreateClientForm((prev) => ({
+    setCreateInvoiceForm((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -131,9 +131,9 @@ const CreateInvoice = () => {
     console.log("Creating new invoice...");
     setIsCreating(true);
 
-    const requiredFieldsOwner = validateRequiredFields(createClientForm.owner);
+    const requiredFieldsOwner = validateRequiredFields(createInvoiceForm.owner);
     const requiredFieldsClient = validateRequiredFields(
-      createClientForm.client,
+      createInvoiceForm.client,
     );
     if (requiredFieldsOwner.length) {
       setIsCreating(false);
@@ -156,14 +156,14 @@ const CreateInvoice = () => {
       }
     }
 
-    if (createClientForm.items.some((item) => !item.title.trim())) {
+    if (createInvoiceForm.items.some((item) => !item.title.trim())) {
       setIsCreating(false);
       setErrorMessage("Each item must have a title.");
       return;
     }
 
     const body = {
-      ...createClientForm,
+      ...createInvoiceForm,
     };
     console.log(body);
     try {
@@ -187,7 +187,7 @@ const CreateInvoice = () => {
   };
 
   const handleDeleteItem = (itemId) => {
-    setCreateClientForm((prev) => ({
+    setCreateInvoiceForm((prev) => ({
       ...prev,
       items: prev.items.toSpliced(itemId, 1),
     }));
@@ -242,7 +242,7 @@ const CreateInvoice = () => {
               className="w-30"
               id="status"
               name="status"
-              value={createClientForm.status}
+              value={createInvoiceForm.status}
               onChange={handleChange}
             >
               <option value="pending">Pending</option>
@@ -257,7 +257,7 @@ const CreateInvoice = () => {
             </div>
             <Datepicker
               id="issuedDate"
-              value={createClientForm.issuedDate}
+              value={createInvoiceForm.issuedDate}
               onChange={(date) => handleChange(null, null, date, "issuedDate")}
             />
           </div>
@@ -267,7 +267,7 @@ const CreateInvoice = () => {
             </div>
             <Datepicker
               id="dueDate"
-              value={createClientForm.dueDate}
+              value={createInvoiceForm.dueDate}
               onChange={(date) => handleChange(null, null, date, "dueDate")}
             />
           </div>
@@ -282,7 +282,7 @@ const CreateInvoice = () => {
               name="taxRate"
               min={0}
               step={0.1}
-              value={createClientForm.taxRate}
+              value={createInvoiceForm.taxRate}
               onChange={handleChange}
             />
           </div>
@@ -299,7 +299,7 @@ const CreateInvoice = () => {
                 name="name"
                 type="text"
                 data-section="owner"
-                value={createClientForm.owner.name}
+                value={createInvoiceForm.owner.name}
                 onChange={handleChange}
                 placeholder="John Doe"
               />
@@ -313,7 +313,7 @@ const CreateInvoice = () => {
                 name="email"
                 type="text"
                 data-section="owner"
-                value={createClientForm.owner.email}
+                value={createInvoiceForm.owner.email}
                 onChange={handleChange}
                 placeholder="john.doe@email.com"
               />
@@ -326,7 +326,7 @@ const CreateInvoice = () => {
                 id="owner-address"
                 name="address"
                 data-section="owner"
-                value={createClientForm.owner.address}
+                value={createInvoiceForm.owner.address}
                 onChange={handleChange}
                 rows={4}
               />
@@ -340,7 +340,7 @@ const CreateInvoice = () => {
                 name="phone"
                 type="text"
                 data-section="owner"
-                value={createClientForm.owner.phone}
+                value={createInvoiceForm.owner.phone}
                 onChange={handleChange}
                 placeholder="262-895-635"
               />
@@ -357,7 +357,7 @@ const CreateInvoice = () => {
                 name="name"
                 type="text"
                 data-section="client"
-                value={createClientForm.client.name}
+                value={createInvoiceForm.client.name}
                 onChange={handleChange}
                 placeholder="Alex Doe"
               />
@@ -371,7 +371,7 @@ const CreateInvoice = () => {
                 name="email"
                 type="text"
                 data-section="client"
-                value={createClientForm.client.email}
+                value={createInvoiceForm.client.email}
                 onChange={handleChange}
                 placeholder="alex.doe@email.com"
               />
@@ -384,7 +384,7 @@ const CreateInvoice = () => {
                 id="client-address"
                 name="address"
                 data-section="client"
-                value={createClientForm.client.address}
+                value={createInvoiceForm.client.address}
                 onChange={handleChange}
                 rows={4}
               />
@@ -398,7 +398,7 @@ const CreateInvoice = () => {
                 name="phone"
                 type="text"
                 data-section="client"
-                value={createClientForm.client.phone}
+                value={createInvoiceForm.client.phone}
                 onChange={handleChange}
                 placeholder="569-235-489"
               />
@@ -407,7 +407,7 @@ const CreateInvoice = () => {
         </div>
         <div className="flex flex-col gap-y-2">
           <h2>Items</h2>
-          {createClientForm.items.map((item, id) => {
+          {createInvoiceForm.items.map((item, id) => {
             return (
               <div key={id} className="flex justify-between items-center">
                 <div>
@@ -434,6 +434,7 @@ const CreateInvoice = () => {
                     type="number"
                     data-section="items"
                     step={1}
+                    min={1}
                     value={item.quantity}
                     onChange={(e) => handleChange(e, id)}
                   />
@@ -462,6 +463,7 @@ const CreateInvoice = () => {
                     name="unitPrice"
                     type="number"
                     data-section="items"
+                    min={0}
                     value={item.unitPrice}
                     onChange={(e) => handleChange(e, id)}
                   />
@@ -491,7 +493,7 @@ const CreateInvoice = () => {
             <Textarea
               id="notes"
               name="notes"
-              value={createClientForm.notes}
+              value={createInvoiceForm.notes}
               onChange={handleChange}
               rows={4}
             />
@@ -499,7 +501,7 @@ const CreateInvoice = () => {
           <div className="flex flex-col gap-y-3 items-center flex-1">
             <div>
               Tax Rate (%)
-              <span className="ml-2">{createClientForm.taxRate || "0"}%</span>
+              <span className="ml-2">{createInvoiceForm.taxRate || "0"}%</span>
             </div>
             <div>
               Tax Amount

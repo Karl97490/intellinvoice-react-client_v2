@@ -33,6 +33,61 @@ const EditInvoice = () => {
     }
   };
 
+  const handleChange = (e, itemIndex, date, dateField) => {
+    if (date && dateField) {
+      setUpdateInvoiceForm((prev) => ({
+        ...prev,
+        [dateField]: date,
+      }));
+      return;
+    }
+
+    const { name, value } = e.target;
+    const section = e.target.dataset.section;
+
+    if (name === "taxRate") {
+      setUpdateInvoiceForm((prev) => ({
+        ...prev,
+        [name]: value,
+        items: prev.items.map((item) => ({
+          ...prev.items,
+          [name]: value,
+        })),
+      }));
+    }
+
+    if (section && (section === "client" || section === "owner")) {
+      setUpdateInvoiceForm((prev) => ({
+        ...prev,
+        [section]: {
+          ...prev[section],
+          [name]: value,
+        },
+      }));
+      return;
+    }
+
+    if (section && section === "items") {
+      setUpdateInvoiceForm((prev) => ({
+        ...prev,
+        items: prev.items.map((item, index) =>
+          index === itemIndex
+            ? {
+                ...item,
+                [name]: value,
+              }
+            : item,
+        ),
+      }));
+      return;
+    }
+
+    setUpdateInvoiceForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   if (isLoading) {
     return (
       <div className="flex flex-col gap-2 items-center mx-auto">
@@ -58,7 +113,7 @@ const EditInvoice = () => {
               id="invoiceNumber"
               type="text"
               name="invoiceNumber"
-              // value={`INV-${String(user.invoices.nextInvoiceNumber).padStart(3, "0")}`}
+              value={updateInvoiceForm.invoiceNumber}
               disabled
             />
           </div>
@@ -70,8 +125,8 @@ const EditInvoice = () => {
               className="w-30"
               id="status"
               name="status"
-              value={undefined}
-              onChange={undefined}
+              value={updateInvoiceForm.status}
+              onChange={handleChange}
             >
               <option value="pending">Pending</option>
               <option value="unpaid">Unpaid</option>
@@ -85,8 +140,8 @@ const EditInvoice = () => {
             </div>
             <Datepicker
               id="issuedDate"
-              value={undefined}
-              // onChange={(date) => handleChange(null, null, date, "issuedDate")}
+              value={new Date(updateInvoiceForm.issuedDate)}
+              onChange={(date) => handleChange(null, null, date, "issuedDate")}
             />
           </div>
           <div>
@@ -95,8 +150,8 @@ const EditInvoice = () => {
             </div>
             <Datepicker
               id="dueDate"
-              value={undefined}
-              // onChange={(date) => handleChange(null, null, date, "dueDate")}
+              value={new Date(updateInvoiceForm.dueDate)}
+              onChange={(date) => handleChange(null, null, date, "dueDate")}
             />
           </div>
           <div>
@@ -110,8 +165,8 @@ const EditInvoice = () => {
               name="taxRate"
               min={0}
               step={0.1}
-              value={undefined}
-              onChange={undefined}
+              value={updateInvoiceForm.taxRate}
+              onChange={handleChange}
             />
           </div>
         </div>
@@ -127,8 +182,8 @@ const EditInvoice = () => {
                 name="name"
                 type="text"
                 data-section="owner"
-                value={undefined}
-                onChange={undefined}
+                value={updateInvoiceForm.owner.name}
+                onChange={handleChange}
                 placeholder="John Doe"
               />
             </div>
@@ -141,8 +196,8 @@ const EditInvoice = () => {
                 name="email"
                 type="text"
                 data-section="owner"
-                value={undefined}
-                onChange={undefined}
+                value={updateInvoiceForm.owner.email}
+                onChange={handleChange}
                 placeholder="john.doe@email.com"
               />
             </div>
@@ -154,8 +209,8 @@ const EditInvoice = () => {
                 id="owner-address"
                 name="address"
                 data-section="owner"
-                value={undefined}
-                onChange={undefined}
+                value={updateInvoiceForm.owner.address}
+                onChange={handleChange}
                 rows={4}
               />
             </div>
@@ -168,8 +223,8 @@ const EditInvoice = () => {
                 name="phone"
                 type="text"
                 data-section="owner"
-                value={undefined}
-                onChange={undefined}
+                value={updateInvoiceForm.owner.phone}
+                onChange={handleChange}
                 placeholder="262-895-635"
               />
             </div>
@@ -185,8 +240,8 @@ const EditInvoice = () => {
                 name="name"
                 type="text"
                 data-section="client"
-                value={undefined}
-                onChange={undefined}
+                value={updateInvoiceForm.client.name}
+                onChange={handleChange}
                 placeholder="Alex Doe"
               />
             </div>
@@ -199,8 +254,8 @@ const EditInvoice = () => {
                 name="email"
                 type="text"
                 data-section="client"
-                value={undefined}
-                onChange={undefined}
+                value={updateInvoiceForm.client.email}
+                onChange={handleChange}
                 placeholder="alex.doe@email.com"
               />
             </div>
@@ -212,8 +267,8 @@ const EditInvoice = () => {
                 id="client-address"
                 name="address"
                 data-section="client"
-                value={undefined}
-                onChange={undefined}
+                value={updateInvoiceForm.client.address}
+                onChange={handleChange}
                 rows={4}
               />
             </div>
@@ -226,8 +281,8 @@ const EditInvoice = () => {
                 name="phone"
                 type="text"
                 data-section="client"
-                value={undefined}
-                onChange={undefined}
+                value={updateInvoiceForm.client.phone}
+                onChange={handleChange}
                 placeholder="569-235-489"
               />
             </div>
@@ -235,7 +290,7 @@ const EditInvoice = () => {
         </div>
         <div className="flex flex-col gap-y-2">
           <h2>Items</h2>
-          {/* {createClientForm.items.map((item, id) => {
+          {updateInvoiceForm.items.map((item, id) => {
             return (
               <div key={id} className="flex justify-between items-center">
                 <div>
@@ -262,6 +317,7 @@ const EditInvoice = () => {
                     type="number"
                     data-section="items"
                     step={1}
+                    min={1}
                     value={item.quantity}
                     onChange={(e) => handleChange(e, id)}
                   />
@@ -290,6 +346,7 @@ const EditInvoice = () => {
                     name="unitPrice"
                     type="number"
                     data-section="items"
+                    min={0}
                     value={item.unitPrice}
                     onChange={(e) => handleChange(e, id)}
                   />
@@ -302,14 +359,14 @@ const EditInvoice = () => {
                   <Button
                     color="red"
                     className="cursor-pointer"
-                    onClick={() => handleDeleteItem(id)}
+                    // onClick={() => handleDeleteItem(id)}
                   >
                     Delete
                   </Button>
                 </div>
               </div>
             );
-          })} */}
+          })}
         </div>
         <div className="flex justify-between">
           <div className="flex-1">
@@ -319,15 +376,15 @@ const EditInvoice = () => {
             <Textarea
               id="notes"
               name="notes"
-              value={undefined}
-              onChange={undefined}
+              value={updateInvoiceForm.notes}
+              onChange={handleChange}
               rows={4}
             />
           </div>
           <div className="flex flex-col gap-y-3 items-center flex-1">
             <div>
               Tax Rate (%)
-              {/* <span className="ml-2">{createClientForm.taxRate || "0"}%</span> */}
+              <span className="ml-2">{updateInvoiceForm.taxRate || "0"}%</span>
             </div>
             <div>
               Tax Amount
