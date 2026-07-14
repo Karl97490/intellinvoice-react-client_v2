@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import invoiceService from "../../../services/invoice.service";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Label,
   TextInput,
@@ -11,11 +11,19 @@ import {
   Spinner,
   Toast,
 } from "flowbite-react";
+import { Check } from "lucide-react";
+import validateRequiredFields from "../../../utils/validateRequiredFields";
+import delay from "../../../utils/delay";
 
 const EditInvoice = () => {
   const { invoiceId } = useParams();
   const [updateInvoiceForm, setUpdateInvoiceForm] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [successToast, setSuccessToast] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     getData();
@@ -88,12 +96,89 @@ const EditInvoice = () => {
     }));
   };
 
-  if (isLoading) {
+  const handleUpdateInvoice = async (e) => {
+    e.preventDefault();
+    console.log("Updating invoice...");
+    setIsUpdating(true);
+
+    const requiredFieldsOwner = validateRequiredFields(updateInvoiceForm.owner);
+    const requiredFieldsClient = validateRequiredFields(
+      updateInvoiceForm.client,
+    );
+    if (requiredFieldsOwner.length) {
+      setIsUpdating(false);
+      if (
+        ["name", "address"].some((field) => requiredFieldsOwner.includes(field))
+      ) {
+        setErrorMessage("Owner name and address are required.");
+        return;
+      }
+    }
+    if (requiredFieldsClient.length) {
+      setIsUpdating(false);
+      if (
+        ["name", "address"].some((field) =>
+          requiredFieldsClient.includes(field),
+        )
+      ) {
+        setErrorMessage("Client name and address are required.");
+        return;
+      }
+    }
+
+    if (updateInvoiceForm.items.some((item) => !item.title.trim())) {
+      setIsUpdating(false);
+      setErrorMessage("Each item must have a title.");
+      return;
+    }
+
+    const body = {
+      ...updateInvoiceForm,
+    };
+    console.log(body);
+    try {
+      const response = await invoiceService.updateInvoice(invoiceId, body);
+      console.log(response);
+      setIsUpdating(false);
+      setSuccessToast(true);
+      setIsRedirecting(true);
+      await delay(2000);
+      navigate(`/invoices/details/${response.data._id}`);
+    } catch (error) {
+      console.log(error.response);
+      setIsUpdating(false);
+      if (error.response && error.response.status === 400) {
+        setErrorMessage(error.response.data.message);
+      }
+      if (error.response && error.response.status === 500) {
+        setErrorMessage("Something went wrong. Please try again");
+      }
+    }
+  };
+
+  if (isLoading || isRedirecting) {
     return (
-      <div className="flex flex-col gap-2 items-center mx-auto">
-        <Spinner aria-label="Loading spinner" size="xl" />
-        <span className="text-md">Loading...</span>
-      </div>
+      <>
+        {successToast && (
+          <Toast className="border border-gray-100">
+            <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
+              <Check size={14} />
+            </div>
+            <div className="ml-3 text-sm font-normal">
+              Save invoice successfully.
+            </div>
+          </Toast>
+        )}
+        <div className="flex flex-col gap-2 items-center mx-auto">
+          <Spinner
+            aria-label={`${isRedirecting && "Redirecting"} Loading spinner`}
+            size="xl"
+          />
+          <span className="text-md">
+            {isLoading ? "Loading..." : "Redirecting..."}
+          </span>
+        </div>
+      </>
     );
   }
 
@@ -102,7 +187,7 @@ const EditInvoice = () => {
       <h1>EditInvoice component</h1>
       <form
         className="flex max-w-screen px-10 flex-col gap-y-8"
-        onSubmit={undefined}
+        onSubmit={handleUpdateInvoice}
       >
         <div className="flex justify-between">
           <div>
@@ -403,23 +488,21 @@ const EditInvoice = () => {
           </div>
         </div>
         <div className="flex justify-center">
-          {/* {errorMessage && (
+          {errorMessage && (
             <p className="text-red-400 first-letter:uppercase">
               {errorMessage}
             </p>
-          )} */}
-          Error Message
+          )}
         </div>
         <Button type="submit" className="cursor-pointer">
-          {/* {isCreating ? (
+          {isUpdating ? (
             <>
               <Spinner aria-label="Saving loading spinner" size="sm" />
               <span className="pl-3">Saving...</span>
             </>
           ) : (
             <>Save invoice</>
-          )} */}
-          Save invoice
+          )}
         </Button>
       </form>
     </>
