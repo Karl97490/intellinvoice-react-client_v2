@@ -55,8 +55,7 @@ const CreateClient = () => {
     console.log(body);
 
     try {
-      const response = await clientService.createClient(body);
-      console.log(response);
+      await clientService.createClient(body);
       setIsCreating(false);
       setSuccessToast(true);
       setIsRedirecting(true);

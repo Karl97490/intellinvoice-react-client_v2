@@ -173,7 +173,7 @@ const CreateInvoice = () => {
       setSuccessToast(true);
       setIsRedirecting(true);
       await delay(2000);
-      navigate("/clients"); // Change to Invoice Details page
+      navigate(`/invoices/details/${response.data._id}`);
     } catch (error) {
       console.log(error.response);
       setIsCreating(false);
