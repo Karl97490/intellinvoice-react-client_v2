@@ -21,6 +21,10 @@ class InvoiceService extends Service {
   updateInvoice = (id, requestBody) => {
     return this.service.patch(this.urlPrefixe + `/${id}`, requestBody);
   };
+
+  deleteInvoice = (id) => {
+    return this.service.delete(this.urlPrefixe + `/${id}`);
+  };
 }
 
 const invoiceService = new InvoiceService("/invoices");

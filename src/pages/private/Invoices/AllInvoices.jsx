@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import invoiceService from "../../../services/invoice.service";
 import { Spinner, Button } from "flowbite-react";
+import { Link } from "react-router-dom";
+import delay from "../../../utils/delay";
 
 const ALlInvoices = () => {
   const [invoices, setInvoices] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -19,6 +22,20 @@ const ALlInvoices = () => {
     } catch (error) {
       console.log(error.response);
       // navigate("error-page") // Redirecto to error page
+    }
+  };
+
+  const handleDeleteInvoice = async (invoiceId) => {
+    console.log("Deleting invoice with id: " + invoiceId);
+    setIsDeleting(true);
+    try {
+      const response = await invoiceService.deleteInvoice(invoiceId);
+      console.log(response);
+      setIsDeleting(false);
+      getData();
+    } catch (error) {
+      console.log(error.response);
+      setIsDeleting(false);
     }
   };
 
@@ -45,15 +62,32 @@ const ALlInvoices = () => {
             <Button
               color="alternative"
               className="cursor-pointer"
-              onClick={undefined}
+              as={Link}
+              to={`/invoices/details/${invoice._id}`}
             >
               Show
             </Button>
-            <Button className="cursor-pointer" onClick={undefined}>
+            <Button
+              className="cursor-pointer"
+              as={Link}
+              to={`/invoices/edit/${invoice._id}`}
+            >
               Edit
             </Button>
-            <Button color="red" className="cursor-pointer" onClick={undefined}>
-              Delete
+            <Button
+              color="red"
+              className="cursor-pointer"
+              onClick={() => handleDeleteInvoice(invoice._id)}
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <>
+                  <Spinner aria-label="Deleting loading spinner" size="sm" />
+                  <span className="pl-3">Loading...</span>
+                </>
+              ) : (
+                <>Delete</>
+              )}
             </Button>
           </div>
         );

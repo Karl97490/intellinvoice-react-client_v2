@@ -532,7 +532,7 @@ const EditInvoice = () => {
             </p>
           )}
         </div>
-        <Button type="submit" className="cursor-pointer">
+        <Button type="submit" className="cursor-pointer" disabled={isUpdating}>
           {isUpdating ? (
             <>
               <Spinner aria-label="Saving loading spinner" size="sm" />
