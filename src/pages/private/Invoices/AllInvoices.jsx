@@ -13,10 +13,12 @@ import {
 import { Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import delay from "../../../utils/delay";
+import useDebounce from "../../../hooks/useDebounce";
 
 const ALlInvoices = () => {
   const [invoices, setInvoices] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const searchQueryDebounced = useDebounce(searchQuery);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [successToast, setSuccessToast] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -24,12 +26,13 @@ const ALlInvoices = () => {
 
   useEffect(() => {
     getData();
-  }, [searchQuery]);
+  }, [searchQueryDebounced]);
 
   const getData = async () => {
     try {
       console.log(searchQuery);
-      const response = await invoiceService.getAllInvoices(searchQuery);
+      const response =
+        await invoiceService.getAllInvoices(searchQueryDebounced);
       console.log(response);
       setIsLoading(false);
       setInvoices(response.data);
