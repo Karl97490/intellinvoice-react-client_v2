@@ -1,11 +1,19 @@
 import { useEffect, useState } from "react";
 import invoiceService from "../../../services/invoice.service";
-import { Spinner, Button } from "flowbite-react";
+import {
+  Spinner,
+  Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from "flowbite-react";
 import { Link } from "react-router-dom";
 import delay from "../../../utils/delay";
 
 const ALlInvoices = () => {
   const [invoices, setInvoices] = useState(null);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -33,6 +41,7 @@ const ALlInvoices = () => {
       console.log(response);
       setIsDeleting(false);
       getData();
+      setOpenDeleteModal(false);
     } catch (error) {
       console.log(error.response);
       setIsDeleting(false);
@@ -52,43 +61,81 @@ const ALlInvoices = () => {
       <h1>AllInvoices component</h1>
       {invoices.map((invoice) => {
         return (
-          <div key={invoice._id} className="flex gap-x-2 items-center">
-            <span>{invoice.client.name}</span>
-            <span>{invoice.invoiceNumber}</span>
-            <span>${invoice.total.toFixed(1)}</span>
-            <span>{invoice.status}</span>
-            <span>{new Date(invoice.issuedDate).toDateString()}</span>
-            <span>{new Date(invoice.dueDate).toDateString()}</span>
-            <Button
-              color="alternative"
-              className="cursor-pointer"
-              as={Link}
-              to={`/invoices/details/${invoice._id}`}
+          <div key={invoice._id}>
+            <div className="flex gap-x-2 items-center">
+              <span>{invoice.client.name}</span>
+              <span>{invoice.invoiceNumber}</span>
+              <span>${invoice.total.toFixed(1)}</span>
+              <span>{invoice.status}</span>
+              <span>{new Date(invoice.issuedDate).toDateString()}</span>
+              <span>{new Date(invoice.dueDate).toDateString()}</span>
+              <Button
+                color="alternative"
+                className="cursor-pointer"
+                as={Link}
+                to={`/invoices/details/${invoice._id}`}
+              >
+                Show
+              </Button>
+              <Button
+                className="cursor-pointer"
+                as={Link}
+                to={`/invoices/edit/${invoice._id}`}
+              >
+                Edit
+              </Button>
+              <Button
+                color="red"
+                className="cursor-pointer"
+                onClick={() => setOpenDeleteModal(true)}
+              >
+                Delete
+              </Button>
+            </div>
+            <Modal
+              show={openDeleteModal}
+              onClose={() => setOpenDeleteModal(false)}
             >
-              Show
-            </Button>
-            <Button
-              className="cursor-pointer"
-              as={Link}
-              to={`/invoices/edit/${invoice._id}`}
-            >
-              Edit
-            </Button>
-            <Button
-              color="red"
-              className="cursor-pointer"
-              onClick={() => handleDeleteInvoice(invoice._id)}
-              disabled={isDeleting}
-            >
-              {isDeleting ? (
-                <>
-                  <Spinner aria-label="Deleting loading spinner" size="sm" />
-                  <span className="pl-3">Loading...</span>
-                </>
-              ) : (
-                <>Delete</>
-              )}
-            </Button>
+              <ModalHeader>Delete invoice</ModalHeader>
+              <ModalBody>
+                <div className="space-y-6">
+                  <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                    Do you wish to delete this invoice ?
+                  </p>
+                  <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                    Please click on delete if you wish so, or cancel to back to
+                    the page.
+                  </p>
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  className="cursor-pointer"
+                  color="alternative"
+                  onClick={() => setOpenDeleteModal(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  className="cursor-pointer"
+                  color="red"
+                  onClick={() => handleDeleteInvoice(invoice._id)}
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? (
+                    <>
+                      <Spinner
+                        aria-label="Deleting loading spinner"
+                        size="sm"
+                      />
+                      <span className="pl-3">Loading...</span>
+                    </>
+                  ) : (
+                    <>Delete</>
+                  )}
+                </Button>
+              </ModalFooter>
+            </Modal>
           </div>
         );
       })}
