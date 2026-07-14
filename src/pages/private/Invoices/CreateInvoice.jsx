@@ -88,10 +88,11 @@ const CreateInvoice = () => {
         ...prev,
         [name]: value,
         items: prev.items.map((item) => ({
-          ...prev.items,
+          ...item,
           [name]: value,
         })),
       }));
+      return;
     }
 
     if (section && (section === "client" || section === "owner")) {
@@ -184,6 +185,22 @@ const CreateInvoice = () => {
         setErrorMessage("Something went wrong. Please try again");
       }
     }
+  };
+
+  const handleAddItem = () => {
+    console.log("adding new item...");
+    setCreateInvoiceForm((prev) => ({
+      ...prev,
+      items: [
+        ...prev.items,
+        {
+          title: "New",
+          quantity: 1,
+          taxRate: 2.5,
+          unitPrice: 0,
+        },
+      ],
+    }));
   };
 
   const handleDeleteItem = (itemIndex) => {
@@ -406,7 +423,12 @@ const CreateInvoice = () => {
           </div>
         </div>
         <div className="flex flex-col gap-y-2">
-          <h2>Items</h2>
+          <div className="flex justify-between">
+            <h2>Items</h2>
+            <Button className="cursor-pointer" onClick={handleAddItem}>
+              Add item
+            </Button>
+          </div>
           {createInvoiceForm.items.map((item, index) => {
             return (
               <div key={index} className="flex justify-between items-center">
@@ -449,8 +471,7 @@ const CreateInvoice = () => {
                     name="taxRate"
                     type="number"
                     data-section="items"
-                    value={item.taxRate}
-                    onChange={(e) => handleChange(e, index)}
+                    value={createInvoiceForm.taxRate}
                     disabled
                   />
                 </div>

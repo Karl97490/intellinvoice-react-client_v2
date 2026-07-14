@@ -57,12 +57,12 @@ const InvoiceDetails = () => {
       <p>Name : {invoice.owner.name}</p>
       <p>Email : {invoice.owner.email}</p>
       <p>Address : {invoice.owner.address}</p>
-      <p>Phone : {invoice.owner.Phone}</p>
+      <p>Phone : {invoice.owner.phone}</p>
       <h2>Client Infos</h2>
       <p>Name : {invoice.client.name}</p>
       <p>Email : {invoice.client.email}</p>
       <p>Address : {invoice.client.address}</p>
-      <p>Phone : {invoice.client.Phone}</p>
+      <p>Phone : {invoice.client.phone}</p>
       <h2>Items</h2>
       {invoice.items.map((item, index) => {
         return (
@@ -77,10 +77,10 @@ const InvoiceDetails = () => {
       <h2>Notes</h2>
       <p>{invoice.notes}</p>
       <h2>Totals</h2>
-      <p>Tax Rate : {invoice.taxRate}%</p>
-      <p>Tax Amount : ${invoice.taxAmount}</p>
-      <p>Sub Total : ${invoice.subTotal}</p>
-      <p>Total : ${invoice.total}</p>
+      <p>Tax Rate : {invoice.taxRate.toFixed(1)}%</p>
+      <p>Tax Amount : ${invoice.taxAmount.toFixed(1)}</p>
+      <p>Sub Total : ${invoice.subTotal.toFixed(1)}</p>
+      <p>Total : ${invoice.total.toFixed(1)}</p>
     </>
   );
 };
