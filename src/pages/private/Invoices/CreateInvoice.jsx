@@ -186,10 +186,10 @@ const CreateInvoice = () => {
     }
   };
 
-  const handleDeleteItem = (itemId) => {
+  const handleDeleteItem = (itemIndex) => {
     setCreateInvoiceForm((prev) => ({
       ...prev,
-      items: prev.items.toSpliced(itemId, 1),
+      items: prev.items.toSpliced(itemIndex, 1),
     }));
   };
 
@@ -407,9 +407,9 @@ const CreateInvoice = () => {
         </div>
         <div className="flex flex-col gap-y-2">
           <h2>Items</h2>
-          {createInvoiceForm.items.map((item, id) => {
+          {createInvoiceForm.items.map((item, index) => {
             return (
-              <div key={id} className="flex justify-between items-center">
+              <div key={index} className="flex justify-between items-center">
                 <div>
                   <div className="mb-2 block">
                     <Label htmlFor="items-title">Title</Label>
@@ -420,7 +420,7 @@ const CreateInvoice = () => {
                     type="text"
                     data-section="items"
                     value={item.title}
-                    onChange={(e) => handleChange(e, id)}
+                    onChange={(e) => handleChange(e, index)}
                   />
                 </div>
                 <div>
@@ -436,7 +436,7 @@ const CreateInvoice = () => {
                     step={1}
                     min={1}
                     value={item.quantity}
-                    onChange={(e) => handleChange(e, id)}
+                    onChange={(e) => handleChange(e, index)}
                   />
                 </div>
                 <div>
@@ -450,7 +450,7 @@ const CreateInvoice = () => {
                     type="number"
                     data-section="items"
                     value={item.taxRate}
-                    onChange={(e) => handleChange(e, id)}
+                    onChange={(e) => handleChange(e, index)}
                     disabled
                   />
                 </div>
@@ -465,7 +465,7 @@ const CreateInvoice = () => {
                     data-section="items"
                     min={0}
                     value={item.unitPrice}
-                    onChange={(e) => handleChange(e, id)}
+                    onChange={(e) => handleChange(e, index)}
                   />
                 </div>
                 <div>
@@ -476,7 +476,7 @@ const CreateInvoice = () => {
                   <Button
                     color="red"
                     className="cursor-pointer"
-                    onClick={() => handleDeleteItem(id)}
+                    onClick={() => handleDeleteItem(index)}
                   >
                     Delete
                   </Button>
