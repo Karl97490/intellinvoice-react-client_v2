@@ -24,11 +24,12 @@ const ALlInvoices = () => {
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [searchQuery]);
 
   const getData = async () => {
     try {
-      const response = await invoiceService.getAllInvoices();
+      console.log(searchQuery);
+      const response = await invoiceService.getAllInvoices(searchQuery);
       console.log(response);
       setIsLoading(false);
       setInvoices(response.data);
