@@ -8,6 +8,7 @@ import {
   ModalBody,
   ModalFooter,
   Toast,
+  TextInput,
 } from "flowbite-react";
 import { Check } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -15,6 +16,7 @@ import delay from "../../../utils/delay";
 
 const ALlInvoices = () => {
   const [invoices, setInvoices] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [successToast, setSuccessToast] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -54,6 +56,11 @@ const ALlInvoices = () => {
     }
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setSearchQuery(value);
+  };
+
   if (isLoading) {
     return (
       <div className="flex flex-col gap-2 items-center mx-auto">
@@ -75,6 +82,15 @@ const ALlInvoices = () => {
           </div>
         </Toast>
       )}
+      <span>{invoices.length || "0"} invoices</span>
+      <TextInput
+        className="w-100"
+        placeholder="search"
+        name="search"
+        type="text"
+        value={searchQuery}
+        onChange={handleChange}
+      />
       {invoices.map((invoice) => {
         return (
           <div key={invoice._id}>
