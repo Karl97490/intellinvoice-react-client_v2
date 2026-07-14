@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import invoiceService from "../../../services/invoice.service";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -14,6 +14,7 @@ import {
 import { Check } from "lucide-react";
 import validateRequiredFields from "../../../utils/validateRequiredFields";
 import delay from "../../../utils/delay";
+import calculateInvoiceTotals from "../../../utils/calculateInvoiceTotals";
 
 const EditInvoice = () => {
   const { invoiceId } = useParams();
@@ -28,6 +29,15 @@ const EditInvoice = () => {
   useEffect(() => {
     getData();
   }, []);
+
+  const totals = useMemo(() => {
+    if (updateInvoiceForm) {
+      return calculateInvoiceTotals(
+        updateInvoiceForm.items,
+        updateInvoiceForm.taxRate,
+      );
+    }
+  }, [updateInvoiceForm?.items, updateInvoiceForm?.taxRate]);
 
   const getData = async () => {
     try {
@@ -481,16 +491,16 @@ const EditInvoice = () => {
             <div>
               Tax Amount
               <span className="ml-2">
-                {/* ${totals.taxAmount.toFixed(1) || "0"} */}
+                ${totals.taxAmount.toFixed(1) || "0"}
               </span>
             </div>
             <div>
               Sub Total
-              {/* <span className="ml-2">${totals.subTotal.toFixed(1) || "0"}</span> */}
+              <span className="ml-2">${totals.subTotal.toFixed(1) || "0"}</span>
             </div>
             <div>
               Total
-              {/* <span className="ml-2">${totals.total.toFixed(1) || "0"}</span> */}
+              <span className="ml-2">${totals.total.toFixed(1) || "0"}</span>
             </div>
           </div>
         </div>
