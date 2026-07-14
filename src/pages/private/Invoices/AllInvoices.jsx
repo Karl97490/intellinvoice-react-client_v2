@@ -7,13 +7,16 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
+  Toast,
 } from "flowbite-react";
+import { Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import delay from "../../../utils/delay";
 
 const ALlInvoices = () => {
   const [invoices, setInvoices] = useState(null);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [successToast, setSuccessToast] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -42,6 +45,9 @@ const ALlInvoices = () => {
       setIsDeleting(false);
       getData();
       setOpenDeleteModal(false);
+      setSuccessToast(true);
+      await delay(2000);
+      setSuccessToast(false);
     } catch (error) {
       console.log(error.response);
       setIsDeleting(false);
@@ -59,6 +65,16 @@ const ALlInvoices = () => {
   return (
     <>
       <h1>AllInvoices component</h1>
+      {successToast && (
+        <Toast className="border border-gray-100">
+          <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
+            <Check size={14} />
+          </div>
+          <div className="ml-3 text-sm font-normal">
+            Delete invoice successfully
+          </div>
+        </Toast>
+      )}
       {invoices.map((invoice) => {
         return (
           <div key={invoice._id}>
