@@ -13,6 +13,10 @@ class InvoiceService extends Service {
   createInvoice = (requestBody) => {
     return this.service.post(this.urlPrefixe + "/", requestBody);
   };
+
+  updateInvoice = (id, requestBody) => {
+    return this.service.patch(this.urlPrefixe + `/${id}`, requestBody);
+  };
 }
 
 const invoiceService = new InvoiceService("/invoices");

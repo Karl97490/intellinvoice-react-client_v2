@@ -27,7 +27,7 @@ const InvoiceDetails = () => {
   if (isLoading) {
     return (
       <>
-        <div className="mx-auto flex flex-col gap-2 items-center">
+        <div className="flex flex-col gap-2 items-center mx-auto">
           <Spinner aria-label="Loading spinner" size="xl" />
           <span className="text-md">Loading...</span>
         </div>
