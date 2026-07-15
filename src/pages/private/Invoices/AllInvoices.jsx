@@ -14,6 +14,7 @@ import {
   Dropdown,
   DropdownItem,
   Checkbox,
+  Select,
 } from "flowbite-react";
 import { Check } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -22,13 +23,18 @@ import useDebounce from "../../../hooks/useDebounce";
 
 const ALlInvoices = () => {
   const [invoices, setInvoices] = useState(null);
+
   const [searchQuery, setSearchQuery] = useState("");
   const searchQueryDebounced = useDebounce(searchQuery);
   const [issuedDateQuery, setIssuedDateQuery] = useState(undefined);
   const [dueDateQuery, setDueDateQuery] = useState(undefined);
   const [statusQuery, setStatusQuery] = useState([]);
+
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [selectedInvoice, setSelectedInvoice] = useState(null);
+
   const [successToast, setSuccessToast] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -61,20 +67,47 @@ const ALlInvoices = () => {
     }
   };
 
-  const handleStatusChange = (e) => {
+  const handleFilterStatus = (e) => {
     const { value, checked } = e.target;
     setStatusQuery((prev) =>
       checked ? [...prev, value] : prev.filter((status) => status !== value),
     );
   };
 
-  const handleDeleteInvoice = async (invoiceId) => {
-    console.log("Deleting invoice with id: " + invoiceId);
+  const handleUpdateStatus = async (invoiceId) => {
+    console.log("Updating status invoice with id: " + invoiceId);
+    // setIsUpdating(true);
+
+    const body = { status: pendingStatus };
+    console.log(body);
+    try {
+      const response = await invoiceService.updateStatusInvoice(
+        invoiceId,
+        body,
+      );
+      console.log(response);
+      // setIsUpdating(false);
+      setOpenUpdateStatusModal(false);
+      getData();
+    } catch (error) {
+      console.log(error.response);
+      // setIsUpdating(false);
+    }
+  };
+
+  const handleDeleteModal = (invoice) => {
+    setSelectedInvoice(invoice);
+    setOpenDeleteModal(true);
+  };
+
+  const handleDeleteInvoice = async () => {
+    console.log("Deleting invoice with id: " + selectedInvoice._id);
     setIsDeleting(true);
     try {
-      const response = await invoiceService.deleteInvoice(invoiceId);
+      const response = await invoiceService.deleteInvoice(selectedInvoice._id);
       console.log(response);
       setIsDeleting(false);
+      setSelectedInvoice(null);
       getData();
       setOpenDeleteModal(false);
       setSuccessToast(true);
@@ -83,6 +116,7 @@ const ALlInvoices = () => {
     } catch (error) {
       console.log(error.response);
       setIsDeleting(false);
+      setSelectedInvoice(null);
     }
   };
 
@@ -160,7 +194,7 @@ const ALlInvoices = () => {
                 id="pending"
                 value="pending"
                 checked={statusQuery.includes("pending")}
-                onChange={handleStatusChange}
+                onChange={handleFilterStatus}
               />
               <Label htmlFor="pending" className="ml-3">
                 Pending
@@ -172,7 +206,7 @@ const ALlInvoices = () => {
                 id="unpaid"
                 value="unpaid"
                 checked={statusQuery.includes("unpaid")}
-                onChange={handleStatusChange}
+                onChange={handleFilterStatus}
               />
               <Label htmlFor="unpaid" className="ml-3">
                 Unpaid
@@ -184,7 +218,7 @@ const ALlInvoices = () => {
                 id="overdue"
                 value="overdue"
                 checked={statusQuery.includes("overdue")}
-                onChange={handleStatusChange}
+                onChange={handleFilterStatus}
               />
               <Label htmlFor="overdue" className="ml-3">
                 Overdue
@@ -196,7 +230,7 @@ const ALlInvoices = () => {
                 id="paid"
                 value="paid"
                 checked={statusQuery.includes("paid")}
-                onChange={handleStatusChange}
+                onChange={handleFilterStatus}
               />
               <Label htmlFor="paid" className="ml-3">
                 Paid
@@ -212,7 +246,15 @@ const ALlInvoices = () => {
               <span>{invoice.client.name}</span>
               <span>{invoice.invoiceNumber}</span>
               <span>${invoice.total.toFixed(1)}</span>
-              <span>{invoice.status}</span>
+              <Select
+                value={invoice.status}
+                onChange={(e) => handleSelectStatus(e.target.value)}
+              >
+                <option value="pending">Pending</option>
+                <option value="unpaid">Unpaid</option>
+                <option value="overdue">Overdue</option>
+                <option value="paid">Paid</option>
+              </Select>
               <span>{new Date(invoice.issuedDate).toDateString()}</span>
               <span>{new Date(invoice.dueDate).toDateString()}</span>
               <Button
@@ -233,58 +275,52 @@ const ALlInvoices = () => {
               <Button
                 color="red"
                 className="cursor-pointer"
-                onClick={() => setOpenDeleteModal(true)}
+                onClick={() => handleDeleteModal(invoice)}
               >
                 Delete
               </Button>
             </div>
-            <Modal
-              show={openDeleteModal}
-              onClose={() => setOpenDeleteModal(false)}
-            >
-              <ModalHeader>Delete invoice</ModalHeader>
-              <ModalBody>
-                <div className="space-y-6">
-                  <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                    Do you wish to delete this invoice ?
-                  </p>
-                  <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                    Please click on delete if you wish so, or cancel to back to
-                    the page.
-                  </p>
-                </div>
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  className="cursor-pointer"
-                  color="alternative"
-                  onClick={() => setOpenDeleteModal(false)}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  className="cursor-pointer"
-                  color="red"
-                  onClick={() => handleDeleteInvoice(invoice._id)}
-                  disabled={isDeleting}
-                >
-                  {isDeleting ? (
-                    <>
-                      <Spinner
-                        aria-label="Deleting loading spinner"
-                        size="sm"
-                      />
-                      <span className="pl-3">Loading...</span>
-                    </>
-                  ) : (
-                    <>Delete</>
-                  )}
-                </Button>
-              </ModalFooter>
-            </Modal>
           </div>
         );
       })}
+      <Modal show={openDeleteModal} onClose={() => setOpenDeleteModal(false)}>
+        <ModalHeader>Delete invoice</ModalHeader>
+        <ModalBody>
+          <div className="space-y-6">
+            <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+              Do you wish to delete this invoice ?
+            </p>
+            <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+              Please click on delete if you wish so, or cancel to back to the
+              page.
+            </p>
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            className="cursor-pointer"
+            color="alternative"
+            onClick={() => setOpenDeleteModal(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            className="cursor-pointer"
+            color="red"
+            onClick={handleDeleteInvoice}
+            disabled={isDeleting}
+          >
+            {isDeleting ? (
+              <>
+                <Spinner aria-label="Deleting loading spinner" size="sm" />
+                <span className="pl-3">Loading...</span>
+              </>
+            ) : (
+              <>Delete</>
+            )}
+          </Button>
+        </ModalFooter>
+      </Modal>
     </>
   );
 };
