@@ -3,10 +3,6 @@ import invoiceService from "../../../services/invoice.service";
 import {
   Spinner,
   Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
   Toast,
   Label,
   TextInput,
@@ -21,6 +17,7 @@ import { Link } from "react-router-dom";
 import delay from "../../../utils/delay";
 import useDebounce from "../../../hooks/useDebounce";
 import ConfirmationModal from "../../../components/ui/ConfirmationModal";
+import NotificationToast from "../../../components/ui/NotificationToast";
 
 const ALlInvoices = () => {
   const [invoices, setInvoices] = useState(null);
@@ -36,7 +33,9 @@ const ALlInvoices = () => {
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [pendingStatus, setPendingStatus] = useState(null);
 
-  const [successToast, setSuccessToast] = useState(false);
+  const [successDeleteToast, setSuccessDeleteToast] = useState(false);
+  const [successUpdateToast, setSuccessUpdateToast] = useState(false);
+
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -84,7 +83,6 @@ const ALlInvoices = () => {
   };
 
   const handleUpdateStatus = async () => {
-    console.log("Updating status invoice with id: " + selectedInvoice._id);
     setIsUpdating(true);
 
     const body = { status: pendingStatus };
@@ -99,6 +97,11 @@ const ALlInvoices = () => {
       setIsUpdating(false);
       getData();
       setOpenUpdateModal(false);
+      setSelectedInvoice(null);
+      setPendingStatus(null);
+      setSuccessUpdateToast(true);
+      await delay(2000);
+      setSuccessUpdateToast(false);
     } catch (error) {
       console.log(error.response);
       setIsUpdating(false);
@@ -112,19 +115,18 @@ const ALlInvoices = () => {
   };
 
   const handleDeleteInvoice = async () => {
-    console.log("Deleting invoice with id: " + selectedInvoice._id);
     setIsDeleting(true);
     try {
       const response = await invoiceService.deleteInvoice(selectedInvoice._id);
       console.log(response);
       await delay(2000);
       setIsDeleting(false);
-      setSelectedInvoice(null);
       getData();
       setOpenDeleteModal(false);
-      setSuccessToast(true);
+      setSelectedInvoice(null);
+      setSuccessDeleteToast(true);
       await delay(2000);
-      setSuccessToast(false);
+      setSuccessDeleteToast(false);
     } catch (error) {
       console.log(error.response);
       setIsDeleting(false);
@@ -142,17 +144,19 @@ const ALlInvoices = () => {
   }
   return (
     <>
-      <h1>AllInvoices component</h1>
-      {successToast && (
-        <Toast className="border border-gray-100">
-          <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
-            <Check size={14} />
-          </div>
-          <div className="ml-3 text-sm font-normal">
-            Delete invoice successfully
-          </div>
-        </Toast>
+      {successUpdateToast && (
+        <NotificationToast
+          status="success"
+          message="Update status successfully"
+        />
       )}
+      {successDeleteToast && (
+        <NotificationToast
+          status="success"
+          message="Delete invoice successfully"
+        />
+      )}
+      <h1>AllInvoices component</h1>
       <span>{invoices.length || "0"} invoices</span>
       <div className="flex items-center gap-x-2 my-4">
         <div>
