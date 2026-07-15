@@ -17,7 +17,11 @@ const InvoiceDetails = () => {
       const response = await invoiceService.getInvoice(invoiceId);
       console.log(response);
       setIsLoading(false);
-      setInvoice(response.data);
+      setInvoice({
+        ...response.data,
+        issuedDate: new Date(response.data.issuedDate),
+        dueDate: new Date(response.data.dueDate),
+      });
     } catch (error) {
       console.log(error.response);
       // navigate("/error-page") // Redirect to error page
@@ -51,8 +55,8 @@ const InvoiceDetails = () => {
       </div>
       <p>Invoice Number : {invoice.invoiceNumber}</p>
       <p>Status : {invoice.status}</p>
-      <p>Issued Date : {new Date(invoice.issuedDate).toDateString()}</p>
-      <p>Due Date : {new Date(invoice.dueDate).toDateString()}</p>
+      <p>Issued Date : {invoice.issuedDate.toDateString()}</p>
+      <p>Due Date : {invoice.dueDate.toDateString()}</p>
       <h2>Owner Infos</h2>
       <p>Name : {invoice.owner.name}</p>
       <p>Email : {invoice.owner.email}</p>

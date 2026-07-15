@@ -44,7 +44,11 @@ const EditInvoice = () => {
       const response = await invoiceService.getInvoice(invoiceId);
       console.log(response);
       setIsLoading(false);
-      setUpdateInvoiceForm(response.data);
+      setUpdateInvoiceForm({
+        ...response.data,
+        issuedDate: new Date(response.data.issuedDate),
+        dueDate: new Date(response.data.dueDate),
+      });
     } catch (error) {
       console.log(error.response);
       // navigate("/error-page") // Redirect to error page
@@ -53,6 +57,7 @@ const EditInvoice = () => {
 
   const handleChange = (e, itemIndex, date, dateField) => {
     if (date && dateField) {
+      console.log(date);
       setUpdateInvoiceForm((prev) => ({
         ...prev,
         [dateField]: date,
@@ -143,10 +148,12 @@ const EditInvoice = () => {
       return;
     }
 
+    console.log(updateInvoiceForm);
     const body = {
       ...updateInvoiceForm,
+      issuedDate: new Date(updateInvoiceForm.issuedDate.setHours(0, 0, 0, 0)),
+      dueDate: new Date(updateInvoiceForm.dueDate.setHours(0, 0, 0, 0)),
     };
-    console.log(body);
     try {
       const response = await invoiceService.updateInvoice(invoiceId, body);
       console.log(response);
@@ -259,7 +266,8 @@ const EditInvoice = () => {
             </div>
             <Datepicker
               id="issuedDate"
-              value={new Date(updateInvoiceForm.issuedDate)}
+              value={updateInvoiceForm.issuedDate}
+              showClearButton={false}
               onChange={(date) => handleChange(null, null, date, "issuedDate")}
             />
           </div>
@@ -269,7 +277,8 @@ const EditInvoice = () => {
             </div>
             <Datepicker
               id="dueDate"
-              value={new Date(updateInvoiceForm.dueDate)}
+              value={updateInvoiceForm.dueDate}
+              showClearButton={false}
               onChange={(date) => handleChange(null, null, date, "dueDate")}
             />
           </div>

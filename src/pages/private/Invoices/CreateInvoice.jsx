@@ -165,6 +165,8 @@ const CreateInvoice = () => {
 
     const body = {
       ...createInvoiceForm,
+      issuedDate: new Date(createInvoiceForm.issuedDate.setHours(0, 0, 0, 0)),
+      dueDate: new Date(createInvoiceForm.dueDate.setHours(0, 0, 0, 0)),
     };
     console.log(body);
     try {
@@ -275,6 +277,7 @@ const CreateInvoice = () => {
             <Datepicker
               id="issuedDate"
               value={createInvoiceForm.issuedDate}
+              showClearButton={false}
               onChange={(date) => handleChange(null, null, date, "issuedDate")}
             />
           </div>
@@ -285,6 +288,7 @@ const CreateInvoice = () => {
             <Datepicker
               id="dueDate"
               value={createInvoiceForm.dueDate}
+              showClearButton={false}
               onChange={(date) => handleChange(null, null, date, "dueDate")}
             />
           </div>

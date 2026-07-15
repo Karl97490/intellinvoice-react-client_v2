@@ -6,8 +6,8 @@ class InvoiceService extends Service {
     this.urlPrefixe = "/api" + urlPrefixe;
   }
 
-  getAllInvoices = (search) => {
-    return this.service.get(this.urlPrefixe + "/", { params: { search } });
+  getAllInvoices = (filter) => {
+    return this.service.get(this.urlPrefixe + "/", { params: filter });
   };
 
   getInvoice = (id) => {

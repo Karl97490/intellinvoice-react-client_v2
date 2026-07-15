@@ -9,6 +9,7 @@ import {
   ModalFooter,
   Toast,
   TextInput,
+  Datepicker,
 } from "flowbite-react";
 import { Check } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -19,6 +20,7 @@ const ALlInvoices = () => {
   const [invoices, setInvoices] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const searchQueryDebounced = useDebounce(searchQuery);
+  const [dateQuery, setDateQuery] = useState(undefined);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [successToast, setSuccessToast] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -26,13 +28,16 @@ const ALlInvoices = () => {
 
   useEffect(() => {
     getData();
-  }, [searchQueryDebounced]);
+  }, [searchQueryDebounced, dateQuery]);
 
   const getData = async () => {
     try {
-      console.log(searchQuery);
-      const response =
-        await invoiceService.getAllInvoices(searchQueryDebounced);
+      // console.log(searchQuery);
+      console.log(dateQuery);
+      const response = await invoiceService.getAllInvoices({
+        search: searchQueryDebounced,
+        date: dateQuery ? new Date(dateQuery.setHours(0, 0, 0, 0)) : undefined,
+      });
       console.log(response);
       setIsLoading(false);
       setInvoices(response.data);
@@ -60,8 +65,12 @@ const ALlInvoices = () => {
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e, date) => {
     const { name, value } = e.target;
+    if (date) {
+      setDateQuery(date);
+      return;
+    }
     setSearchQuery(value);
   };
 
@@ -87,14 +96,21 @@ const ALlInvoices = () => {
         </Toast>
       )}
       <span>{invoices.length || "0"} invoices</span>
-      <TextInput
-        className="w-100"
-        placeholder="search"
-        name="search"
-        type="text"
-        value={searchQuery}
-        onChange={handleChange}
-      />
+      <div className="flex gap-x-2 my-4">
+        <TextInput
+          className="w-100"
+          placeholder="search"
+          name="search"
+          type="text"
+          value={searchQuery}
+          onChange={(date) => setDateQuery(date ?? undefined)}
+        />
+        <Datepicker
+          className="w-70"
+          value={dateQuery}
+          onChange={(date) => setDateQuery(date ?? undefined)}
+        />
+      </div>
       {invoices.map((invoice) => {
         return (
           <div key={invoice._id}>
