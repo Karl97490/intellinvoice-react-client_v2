@@ -20,6 +20,7 @@ import { Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import delay from "../../../utils/delay";
 import useDebounce from "../../../hooks/useDebounce";
+import ConfirmationModal from "../../../components/ui/ConfirmationModal";
 
 const ALlInvoices = () => {
   const [invoices, setInvoices] = useState(null);
@@ -77,8 +78,6 @@ const ALlInvoices = () => {
   };
 
   const handleUpdateModal = (invoice, value) => {
-    console.log(value);
-    console.log(invoice);
     setSelectedInvoice(invoice);
     setPendingStatus(value);
     setOpenUpdateModal(true);
@@ -96,6 +95,7 @@ const ALlInvoices = () => {
         body,
       );
       console.log(response);
+      await delay(2000);
       setIsUpdating(false);
       getData();
       setOpenUpdateModal(false);
@@ -106,6 +106,7 @@ const ALlInvoices = () => {
   };
 
   const handleDeleteModal = (invoice) => {
+    console.log("invoice with id: " + invoice._id);
     setSelectedInvoice(invoice);
     setOpenDeleteModal(true);
   };
@@ -116,6 +117,7 @@ const ALlInvoices = () => {
     try {
       const response = await invoiceService.deleteInvoice(selectedInvoice._id);
       console.log(response);
+      await delay(2000);
       setIsDeleting(false);
       setSelectedInvoice(null);
       getData();
@@ -293,82 +295,26 @@ const ALlInvoices = () => {
           </div>
         );
       })}
-      <Modal show={openDeleteModal} onClose={() => setOpenDeleteModal(false)}>
-        <ModalHeader>Delete invoice</ModalHeader>
-        <ModalBody>
-          <div className="space-y-6">
-            <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              Do you wish to delete this invoice ?
-            </p>
-            <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              Please click on delete if you wish so, or cancel to back to the
-              page.
-            </p>
-          </div>
-        </ModalBody>
-        <ModalFooter>
-          <Button
-            className="cursor-pointer"
-            color="alternative"
-            onClick={() => setOpenDeleteModal(false)}
-          >
-            Cancel
-          </Button>
-          <Button
-            className="cursor-pointer"
-            color="red"
-            onClick={handleDeleteInvoice}
-            disabled={isDeleting}
-          >
-            {isDeleting ? (
-              <>
-                <Spinner aria-label="Deleting loading spinner" size="sm" />
-                <span className="pl-3">Loading...</span>
-              </>
-            ) : (
-              <>Delete</>
-            )}
-          </Button>
-        </ModalFooter>
-      </Modal>
-      <Modal show={openUpdateModal} onClose={() => setOpenUpdateModal(false)}>
-        <ModalHeader>Update status invoice</ModalHeader>
-        <ModalBody>
-          <div className="space-y-6">
-            <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              Do you wish to change invoice status from{" "}
-              {selectedInvoice?.status} to {pendingStatus} ?
-            </p>
-            <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              Please click on confirm if you wish so, or cancel to back to the
-              page.
-            </p>
-          </div>
-        </ModalBody>
-        <ModalFooter>
-          <Button
-            className="cursor-pointer"
-            color="alternative"
-            onClick={() => setOpenUpdateModal(false)}
-          >
-            Cancel
-          </Button>
-          <Button
-            className="cursor-pointer"
-            onClick={handleUpdateStatus}
-            disabled={isUpdating}
-          >
-            {isUpdating ? (
-              <>
-                <Spinner aria-label="Updating loading spinner" size="sm" />
-                <span className="pl-3">Loading...</span>
-              </>
-            ) : (
-              <>Confirm</>
-            )}
-          </Button>
-        </ModalFooter>
-      </Modal>
+      <ConfirmationModal
+        show={openDeleteModal}
+        status={"delete"}
+        title={"Delete invoice"}
+        message={"Do you wish to delete this invoice ?"}
+        confirmText={"Delete"}
+        isLoading={isDeleting}
+        onClose={() => setOpenDeleteModal(false)}
+        onConfirm={handleDeleteInvoice}
+      />
+      <ConfirmationModal
+        show={openUpdateModal}
+        status={"update"}
+        title={"Update status invoice"}
+        message={`Do you wish to change invoice status from ${selectedInvoice?.status} to ${pendingStatus} ?`}
+        confirmText={"Confirm"}
+        isLoading={isUpdating}
+        onClose={() => setOpenUpdateModal(false)}
+        onConfirm={handleUpdateStatus}
+      />
     </>
   );
 };
