@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import invoiceService from "../../../services/invoice.service";
 import {
   Spinner,
@@ -11,6 +11,9 @@ import {
   Label,
   TextInput,
   Datepicker,
+  Dropdown,
+  DropdownItem,
+  Checkbox,
 } from "flowbite-react";
 import { Check } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -23,6 +26,7 @@ const ALlInvoices = () => {
   const searchQueryDebounced = useDebounce(searchQuery);
   const [issuedDateQuery, setIssuedDateQuery] = useState(undefined);
   const [dueDateQuery, setDueDateQuery] = useState(undefined);
+  const [statusQuery, setStatusQuery] = useState([]);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [successToast, setSuccessToast] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -30,13 +34,14 @@ const ALlInvoices = () => {
 
   useEffect(() => {
     getData();
-  }, [searchQueryDebounced, issuedDateQuery, dueDateQuery]);
+  }, [searchQueryDebounced, issuedDateQuery, dueDateQuery, statusQuery]);
 
   const getData = async () => {
     try {
       // console.log(searchQuery);
-      console.log(issuedDateQuery);
-      console.log(dueDateQuery);
+      // console.log(issuedDateQuery);
+      // console.log(dueDateQuery);
+      console.log(statusQuery);
       const response = await invoiceService.getAllInvoices({
         search: searchQueryDebounced,
         issuedDate: issuedDateQuery
@@ -45,6 +50,7 @@ const ALlInvoices = () => {
         dueDate: dueDateQuery
           ? new Date(dueDateQuery.setHours(0, 0, 0, 0))
           : undefined,
+        status: statusQuery,
       });
       console.log(response);
       setIsLoading(false);
@@ -53,6 +59,13 @@ const ALlInvoices = () => {
       console.log(error.response);
       // navigate("error-page") // Redirecto to error page
     }
+  };
+
+  const handleStatusChange = (e) => {
+    const { value, checked } = e.target;
+    setStatusQuery((prev) =>
+      checked ? [...prev, value] : prev.filter((status) => status !== value),
+    );
   };
 
   const handleDeleteInvoice = async (invoiceId) => {
@@ -71,15 +84,6 @@ const ALlInvoices = () => {
       console.log(error.response);
       setIsDeleting(false);
     }
-  };
-
-  const handleChange = (e, date) => {
-    const { name, value } = e.target;
-    if (date) {
-      setIssuedDateQuery(date);
-      return;
-    }
-    setSearchQuery(value);
   };
 
   if (isLoading) {
@@ -116,7 +120,7 @@ const ALlInvoices = () => {
             name="search"
             type="text"
             value={searchQuery}
-            onChange={(date) => setIssuedDateQuery(date ?? undefined)}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
         <div>
@@ -140,6 +144,65 @@ const ALlInvoices = () => {
             value={dueDateQuery}
             onChange={(date) => setDueDateQuery(date ?? undefined)}
           />
+        </div>
+        <div>
+          <div className="mb-2 block">
+            <Label htmlFor="status">Status</Label>
+          </div>
+          <Dropdown
+            className="cursor-pointer"
+            label="filter by status"
+            color="alternative"
+            dismissOnClick={false}
+          >
+            <DropdownItem>
+              <Checkbox
+                id="pending"
+                value="pending"
+                checked={statusQuery.includes("pending")}
+                onChange={handleStatusChange}
+              />
+              <Label htmlFor="pending" className="ml-3">
+                Pending
+              </Label>
+            </DropdownItem>
+            <DropdownItem>
+              <Checkbox
+                className="cursor-pointer"
+                id="unpaid"
+                value="unpaid"
+                checked={statusQuery.includes("unpaid")}
+                onChange={handleStatusChange}
+              />
+              <Label htmlFor="unpaid" className="ml-3">
+                Unpaid
+              </Label>
+            </DropdownItem>
+            <DropdownItem>
+              <Checkbox
+                className="cursor-pointer"
+                id="overdue"
+                value="overdue"
+                checked={statusQuery.includes("overdue")}
+                onChange={handleStatusChange}
+              />
+              <Label htmlFor="overdue" className="ml-3">
+                Overdue
+              </Label>
+            </DropdownItem>
+            <DropdownItem>
+              <Checkbox
+                className="cursor-pointer"
+                id="paid"
+                value="paid"
+                checked={statusQuery.includes("paid")}
+                onChange={handleStatusChange}
+              />
+              <Label htmlFor="paid" className="ml-3">
+                Paid
+              </Label>
+            </DropdownItem>
+          </Dropdown>
         </div>
       </div>
       {invoices.map((invoice) => {
