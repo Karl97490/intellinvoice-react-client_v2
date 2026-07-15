@@ -8,6 +8,7 @@ import {
   ModalBody,
   ModalFooter,
   Toast,
+  Label,
   TextInput,
   Datepicker,
 } from "flowbite-react";
@@ -20,7 +21,8 @@ const ALlInvoices = () => {
   const [invoices, setInvoices] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const searchQueryDebounced = useDebounce(searchQuery);
-  const [dateQuery, setDateQuery] = useState(undefined);
+  const [issuedDateQuery, setIssuedDateQuery] = useState(undefined);
+  const [dueDateQuery, setDueDateQuery] = useState(undefined);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [successToast, setSuccessToast] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -28,15 +30,21 @@ const ALlInvoices = () => {
 
   useEffect(() => {
     getData();
-  }, [searchQueryDebounced, dateQuery]);
+  }, [searchQueryDebounced, issuedDateQuery, dueDateQuery]);
 
   const getData = async () => {
     try {
       // console.log(searchQuery);
-      console.log(dateQuery);
+      console.log(issuedDateQuery);
+      console.log(dueDateQuery);
       const response = await invoiceService.getAllInvoices({
         search: searchQueryDebounced,
-        date: dateQuery ? new Date(dateQuery.setHours(0, 0, 0, 0)) : undefined,
+        issuedDate: issuedDateQuery
+          ? new Date(issuedDateQuery.setHours(0, 0, 0, 0))
+          : undefined,
+        dueDate: dueDateQuery
+          ? new Date(dueDateQuery.setHours(0, 0, 0, 0))
+          : undefined,
       });
       console.log(response);
       setIsLoading(false);
@@ -68,7 +76,7 @@ const ALlInvoices = () => {
   const handleChange = (e, date) => {
     const { name, value } = e.target;
     if (date) {
-      setDateQuery(date);
+      setIssuedDateQuery(date);
       return;
     }
     setSearchQuery(value);
@@ -96,20 +104,43 @@ const ALlInvoices = () => {
         </Toast>
       )}
       <span>{invoices.length || "0"} invoices</span>
-      <div className="flex gap-x-2 my-4">
-        <TextInput
-          className="w-100"
-          placeholder="search"
-          name="search"
-          type="text"
-          value={searchQuery}
-          onChange={(date) => setDateQuery(date ?? undefined)}
-        />
-        <Datepicker
-          className="w-70"
-          value={dateQuery}
-          onChange={(date) => setDateQuery(date ?? undefined)}
-        />
+      <div className="flex items-center gap-x-2 my-4">
+        <div>
+          <div className="mb-2 block">
+            <Label htmlFor="search">Search</Label>
+          </div>
+          <TextInput
+            id="search"
+            className="w-100"
+            placeholder="search"
+            name="search"
+            type="text"
+            value={searchQuery}
+            onChange={(date) => setIssuedDateQuery(date ?? undefined)}
+          />
+        </div>
+        <div>
+          <div className="mb-2 block">
+            <Label htmlFor="issuedDate">Issued Date</Label>
+          </div>
+          <Datepicker
+            id="issuedDate"
+            className="w-70"
+            value={issuedDateQuery}
+            onChange={(date) => setIssuedDateQuery(date ?? undefined)}
+          />
+        </div>
+        <div>
+          <div className="mb-2 block">
+            <Label htmlFor="dueDate">Due Date</Label>
+          </div>
+          <Datepicker
+            id="dueDate"
+            className="w-70"
+            value={dueDateQuery}
+            onChange={(date) => setDueDateQuery(date ?? undefined)}
+          />
+        </div>
       </div>
       {invoices.map((invoice) => {
         return (
