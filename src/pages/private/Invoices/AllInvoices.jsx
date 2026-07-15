@@ -31,7 +31,9 @@ const ALlInvoices = () => {
   const [statusQuery, setStatusQuery] = useState([]);
 
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [openUpdateModal, setOpenUpdateModal] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
+  const [pendingStatus, setPendingStatus] = useState(null);
 
   const [successToast, setSuccessToast] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -74,24 +76,32 @@ const ALlInvoices = () => {
     );
   };
 
-  const handleUpdateStatus = async (invoiceId) => {
-    console.log("Updating status invoice with id: " + invoiceId);
-    // setIsUpdating(true);
+  const handleUpdateModal = (invoice, value) => {
+    console.log(value);
+    console.log(invoice);
+    setSelectedInvoice(invoice);
+    setPendingStatus(value);
+    setOpenUpdateModal(true);
+  };
+
+  const handleUpdateStatus = async () => {
+    console.log("Updating status invoice with id: " + selectedInvoice._id);
+    setIsUpdating(true);
 
     const body = { status: pendingStatus };
     console.log(body);
     try {
       const response = await invoiceService.updateStatusInvoice(
-        invoiceId,
+        selectedInvoice._id,
         body,
       );
       console.log(response);
-      // setIsUpdating(false);
-      setOpenUpdateStatusModal(false);
+      setIsUpdating(false);
       getData();
+      setOpenUpdateModal(false);
     } catch (error) {
       console.log(error.response);
-      // setIsUpdating(false);
+      setIsUpdating(false);
     }
   };
 
@@ -248,7 +258,7 @@ const ALlInvoices = () => {
               <span>${invoice.total.toFixed(1)}</span>
               <Select
                 value={invoice.status}
-                onChange={(e) => handleSelectStatus(e.target.value)}
+                onChange={(e) => handleUpdateModal(invoice, e.target.value)}
               >
                 <option value="pending">Pending</option>
                 <option value="unpaid">Unpaid</option>
@@ -317,6 +327,44 @@ const ALlInvoices = () => {
               </>
             ) : (
               <>Delete</>
+            )}
+          </Button>
+        </ModalFooter>
+      </Modal>
+      <Modal show={openUpdateModal} onClose={() => setOpenUpdateModal(false)}>
+        <ModalHeader>Update status invoice</ModalHeader>
+        <ModalBody>
+          <div className="space-y-6">
+            <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+              Do you wish to change invoice status from{" "}
+              {selectedInvoice?.status} to {pendingStatus} ?
+            </p>
+            <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+              Please click on confirm if you wish so, or cancel to back to the
+              page.
+            </p>
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            className="cursor-pointer"
+            color="alternative"
+            onClick={() => setOpenUpdateModal(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            className="cursor-pointer"
+            onClick={handleUpdateStatus}
+            disabled={isUpdating}
+          >
+            {isUpdating ? (
+              <>
+                <Spinner aria-label="Updating loading spinner" size="sm" />
+                <span className="pl-3">Loading...</span>
+              </>
+            ) : (
+              <>Confirm</>
             )}
           </Button>
         </ModalFooter>
