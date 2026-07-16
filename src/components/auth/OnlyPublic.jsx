@@ -6,7 +6,7 @@ const OnlyPublic = () => {
   const { isLoggedIn } = useContext(AuthContext);
 
   if (isLoggedIn) {
-    return <Navigate to="/clients" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   return <Outlet />;
