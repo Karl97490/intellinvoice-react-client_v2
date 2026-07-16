@@ -7,7 +7,7 @@ import { InvoiceStatsContext } from "../../contexts/invoiceStats.context";
 const Dashboard = () => {
   const [invoices, setInvoices] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const invoiceStats = useContext(InvoiceStatsContext);
+  const { invoiceStats } = useContext(InvoiceStatsContext);
 
   useEffect(() => {
     getData();

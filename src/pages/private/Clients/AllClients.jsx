@@ -21,7 +21,8 @@ import { ClientStatsContext } from "../../../contexts/clientStats.context";
 
 const AllClients = () => {
   const [clients, setClients] = useState(null);
-  const clientStats = useContext(ClientStatsContext);
+  const { clientStats, getData: getClientStats } =
+    useContext(ClientStatsContext);
 
   const [updateClientForm, setUpdateClientForm] = useState({
     name: "",
@@ -122,6 +123,7 @@ const AllClients = () => {
       const response = await clientService.deleteClient(id);
       setIsLoading(false); // Update Loading method later - just disabling btn for e.g
       getData();
+      getClientStats();
     } catch (error) {
       console.log(error.response);
       setIsLoading(false);

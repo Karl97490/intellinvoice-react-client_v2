@@ -26,6 +26,11 @@ const InvoiceStatsProviderWrapper = (props) => {
     }
   };
 
+  const statsContext = {
+    invoiceStats,
+    getData,
+  };
+
   if (isLoading) {
     return (
       <div className="flex flex-col gap-2 items-center mx-auto">
@@ -36,7 +41,7 @@ const InvoiceStatsProviderWrapper = (props) => {
   }
 
   return (
-    <InvoiceStatsContext.Provider value={invoiceStats}>
+    <InvoiceStatsContext.Provider value={statsContext}>
       {props.children}
     </InvoiceStatsContext.Provider>
   );

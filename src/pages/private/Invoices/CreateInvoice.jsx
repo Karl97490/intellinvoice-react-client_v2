@@ -18,12 +18,13 @@ import calculateInvoiceTotals from "../../../utils/calculateInvoiceTotals";
 import { AuthContext } from "../../../contexts/auth.context";
 
 const CreateInvoice = () => {
+  const { user } = useContext(AuthContext);
   const [createInvoiceForm, setCreateInvoiceForm] = useState({
     owner: {
-      name: "",
-      email: "",
-      address: "",
-      phone: "",
+      name: user?.company?.name || "",
+      email: user?.company?.email || "",
+      address: user?.company?.address || "",
+      phone: user?.company?.phone || "",
     },
     client: {
       name: "",
@@ -61,7 +62,6 @@ const CreateInvoice = () => {
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [successToast, setSuccessToast] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
-  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const totals = useMemo(() => {

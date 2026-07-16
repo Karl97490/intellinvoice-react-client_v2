@@ -21,7 +21,8 @@ import { InvoiceStatsContext } from "../../../contexts/invoiceStats.context";
 
 const ALlInvoices = () => {
   const [invoices, setInvoices] = useState(null);
-  const invoiceStats = useContext(InvoiceStatsContext);
+  const { invoiceStats, getData: getInvoiceStats } =
+    useContext(InvoiceStatsContext);
 
   const [searchQuery, setSearchQuery] = useState("");
   const searchQueryDebounced = useDebounce(searchQuery);
@@ -127,6 +128,7 @@ const ALlInvoices = () => {
       await delay(2000);
       setIsDeleting(false);
       getData();
+      getInvoiceStats();
       setOpenDeleteModal(false);
       setSelectedInvoice(null);
       setSuccessDeleteToast(true);
