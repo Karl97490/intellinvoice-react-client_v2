@@ -14,6 +14,10 @@ class InvoiceService extends Service {
     return this.service.get(this.urlPrefixe + `/${id}`);
   };
 
+  getInvoiceStats = () => {
+    return this.service.get(this.urlPrefixe + "/stats");
+  };
+
   createInvoice = (requestBody) => {
     return this.service.post(this.urlPrefixe + "/", requestBody);
   };

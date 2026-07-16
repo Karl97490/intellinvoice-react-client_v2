@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import invoiceService from "../../services/invoice.service";
 import { Button, Spinner } from "flowbite-react";
 import { Link } from "react-router-dom";
+import { InvoiceStatsContext } from "../../contexts/invoiceStats.context";
 
 const Dashboard = () => {
   const [invoices, setInvoices] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const invoiceStats = useContext(InvoiceStatsContext);
 
   useEffect(() => {
     getData();
@@ -40,6 +42,12 @@ const Dashboard = () => {
   return (
     <>
       <h1>Dashboard component</h1>
+      <h2>Invoice Stats</h2>
+      <div className="flex gap-x-2">
+        <span>Total Paid : {invoiceStats.totalPaid}</span>
+        <span>Total Unpaid : {invoiceStats.totalUnpaid}</span>
+        <span>Total Amount : ${invoiceStats.totalAmount}</span>
+      </div>
       <h2>Recent Invoices</h2>
       {invoices.map((invoice) => {
         return (
