@@ -5,6 +5,10 @@ class UserService extends Service {
     super();
     this.urlPrefixe = "/api" + urlPrefixe;
   }
+
+  updateUser = (id, requestBody) => {
+    return this.service.patch(this.urlPrefixe + `/${id}`, requestBody);
+  };
 }
 
 const userService = new UserService("/users");
