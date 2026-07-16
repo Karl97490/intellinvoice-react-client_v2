@@ -96,7 +96,6 @@ const ALlInvoices = () => {
         body,
       );
       console.log(response);
-      await delay(2000);
       setIsUpdating(false);
       getData();
       setOpenUpdateModal(false);
@@ -124,8 +123,6 @@ const ALlInvoices = () => {
     setIsDeleting(true);
     try {
       const response = await invoiceService.deleteInvoice(selectedInvoice._id);
-      console.log(response);
-      await delay(2000);
       setIsDeleting(false);
       getData();
       getInvoiceStats();
@@ -137,9 +134,11 @@ const ALlInvoices = () => {
     } catch (error) {
       // console.log(error.response);
       setIsDeleting(false);
+      setOpenDeleteModal(false);
+      setSelectedInvoice(null);
       setErrorToast(true);
       await delay(2000);
-      setErrorToast(false);
+      setErrorToast(false); // Find a way to display toast when modal opened
     }
   };
 
@@ -167,7 +166,6 @@ const ALlInvoices = () => {
       )}
       {errorToast && (
         <NotificationToast
-          className="absolute"
           status="error"
           message="Something went wrong. Please try again"
         />
