@@ -13,12 +13,14 @@ import {
 } from "flowbite-react";
 import { Link } from "react-router-dom";
 import { InvoiceStatsContext } from "../../contexts/invoiceStats.context";
-import { CircleCheck } from "lucide-react";
+import { CircleCheck, CircleDollarSign, Receipt, Eye } from "lucide-react";
+import { AuthContext } from "../../contexts/auth.context";
 
 const Dashboard = () => {
   const [invoices, setInvoices] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const { invoiceStats } = useContext(InvoiceStatsContext);
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     getData();
@@ -54,35 +56,41 @@ const Dashboard = () => {
         <Card className="mb-4">
           <div className="flex flex-col gap-y-1">
             <h2 className="dark:text-white">Dashboard</h2>
-            <p className="dark:text-white">Welcome User !</p>
+            <p className="dark:text-white">Welcome {user?.firstName} !</p>
           </div>
         </Card>
         <div class="p-4 border border-gray-500 border-dashed rounded">
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
             <Card>
               <div className="flex justify-center items-center">
-                <div className="inline-flex h-15 w-15 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200"></div>
+                <div className="inline-flex h-15 w-15 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
+                  <CircleDollarSign size={32} />
+                </div>
                 <div className="flex-1 text-center dark:text-white">
                   <h3>Total Paid</h3>
-                  <span>$1200</span>
+                  <span>${invoiceStats.totalPaid}</span>
                 </div>
               </div>
             </Card>
             <Card>
               <div className="flex justify-center items-center">
-                <div className="inline-flex h-15 w-15 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500 dark:bg-red-800 dark:text-red-200"></div>
+                <div className="inline-flex h-15 w-15 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500 dark:bg-red-800 dark:text-red-200">
+                  <CircleDollarSign size={32} />
+                </div>
                 <div className="flex-1 text-center dark:text-white">
                   <h3>Total Unpaid</h3>
-                  <span>$1200</span>
+                  <span>${invoiceStats.totalUnpaid}</span>
                 </div>
               </div>
             </Card>
             <Card>
               <div className="flex justify-center items-center">
-                <div className="inline-flex h-15 w-15 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-500 dark:bg-blue-800 dark:text-blue-200"></div>
+                <div className="inline-flex h-15 w-15 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-500 dark:bg-blue-800 dark:text-blue-200">
+                  <Receipt size={32} />
+                </div>
                 <div className="flex-1 text-center dark:text-white">
                   <h3>Total Amount</h3>
-                  <span>$1200</span>
+                  <span>${invoiceStats.totalAmount}</span>
                 </div>
               </div>
             </Card>
@@ -108,6 +116,19 @@ const Dashboard = () => {
           </Card>
           <Card className="overflow-x-auto">
             <Table>
+              <caption className="mb-1 p-4 text-left text-lg font-semibold text-gray-900 dark:text-white">
+                <div className="flex justify-between items-end">
+                  <div className="flex flex-col">
+                    Recent Invoices
+                    <p className="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
+                      The latest invoices created by your business.
+                    </p>
+                  </div>
+                  <Button as={Link} to="/invoices" className="cursor-pointer">
+                    View All
+                  </Button>
+                </div>
+              </caption>
               <TableHead>
                 <TableRow>
                   <TableHeadCell>Client</TableHeadCell>
@@ -115,40 +136,40 @@ const Dashboard = () => {
                   <TableHeadCell>Amount</TableHeadCell>
                   <TableHeadCell>Status</TableHeadCell>
                   <TableHeadCell>Issued Date</TableHeadCell>
-                  {/* <TableHeadCell>Due Date</TableHeadCell> */}
                   <TableHeadCell>
                     <span className="sr-only">View</span>
                   </TableHeadCell>
                 </TableRow>
               </TableHead>
               <TableBody className="divide-y">
-                <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                  <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                    Alex Doe
-                  </TableCell>
-                  <TableCell>#INV-001</TableCell>
-                  <TableCell>$1500</TableCell>
-                  <TableCell>Pending</TableCell>
-                  <TableCell>05/12/2026</TableCell>
-                  <TableCell>
-                    <Link
-                      to=""
-                      className="font-medium text-primary-600 hover:underline dark:text-primary-500"
-                    >
-                      View
-                    </Link>
-                  </TableCell>
-                </TableRow>
+                {invoices.map((invoice) => {
+                  return (
+                    <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                      <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                        {invoice.client.name}
+                      </TableCell>
+                      <TableCell>#{invoice.invoiceNumber}</TableCell>
+                      <TableCell>$ {invoice.total}</TableCell>
+                      <TableCell className="capitalize">
+                        {invoice.status}
+                      </TableCell>
+                      <TableCell>
+                        {new Date(invoice.issuedDate).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        <Link
+                          to={`/invoices/details/${invoice._id}`}
+                          className="font-medium text-primary-600 dark:text-primary-500"
+                        >
+                          <Eye size={20} />
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </Card>
-          {/* <div class="flex items-center justify-center h-48 rounded-base bg-red-100 mb-4"></div>
-          <div class="grid grid-cols-2 gap-4">
-            <div class="flex items-center justify-center h-24 rounded-base bg-red-100"></div>
-            <div class="flex items-center justify-center h-24 rounded-base bg-red-100"></div>
-            <div class="flex items-center justify-center h-24 rounded-base bg-red-100"></div>
-            <div class="flex items-center justify-center h-24 rounded-base bg-red-100"></div>
-          </div> */}
         </div>
       </section>
       {/* <h1>Dashboard component</h1>
