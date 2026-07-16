@@ -152,7 +152,6 @@ const AllClients = () => {
   const handleDeleteClient = async () => {
     setIsDeleting(true);
     try {
-      await Promise.reject();
       const response = await clientService.deleteClient(selectedClient._id);
       setIsDeleting(false);
       getData();
