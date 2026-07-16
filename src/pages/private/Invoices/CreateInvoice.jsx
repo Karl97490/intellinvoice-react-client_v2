@@ -249,8 +249,12 @@ const CreateInvoice = () => {
                 </p>
               </div>
               <div className="flex gap-x-2">
-                <Button color="alternative" className="cursor-pointer">
-                  Cancel
+                <Button
+                  color="alternative"
+                  className="cursor-pointer"
+                  onClick={() => navigate(-1)}
+                >
+                  Back
                 </Button>
                 <Button
                   type="submit"

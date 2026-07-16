@@ -2,7 +2,6 @@ import PrivateLayout from "../components/layout/PrivateLayout.jsx";
 import Dashboard from "../pages/private/Dashboard.jsx";
 import OnlyPrivate from "../components/auth/OnlyPrivate.jsx";
 import AllClients from "../pages/private/Clients/AllClients.jsx";
-import CreateClient from "../pages/private/Clients/CreateClient.jsx";
 import CreateInvoice from "../pages/private/Invoices/CreateInvoice.jsx";
 import InvoiceDetails from "../pages/private/Invoices/InvoiceDetails.jsx";
 import EditInvoice from "../pages/private/Invoices/EditInvoice.jsx";
@@ -39,10 +38,6 @@ const privateRoutes = [
           {
             path: "/clients",
             element: <AllClients />,
-          },
-          {
-            path: "/clients/new",
-            element: <CreateClient />,
           },
           {
             path: "/profile",

@@ -10,6 +10,7 @@ import {
   TableHead,
   TableHeadCell,
   TableRow,
+  Badge,
 } from "flowbite-react";
 import { Link } from "react-router-dom";
 import { InvoiceStatsContext } from "../../contexts/invoiceStats.context";
@@ -21,6 +22,12 @@ const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { invoiceStats } = useContext(InvoiceStatsContext);
   const { user } = useContext(AuthContext);
+  const badgeColor = {
+    unpaid: "failure",
+    pending: "indigo",
+    paid: "success",
+    overdue: "warning",
+  };
 
   useEffect(() => {
     getData();
@@ -56,7 +63,12 @@ const Dashboard = () => {
         <Card className="mb-4">
           <div className="flex flex-col gap-y-1">
             <h2 className="dark:text-white">Dashboard</h2>
-            <p className="dark:text-white">Welcome {user?.firstName} !</p>
+            <p className="dark:text-white">
+              {user.invoices.nextInvoiceNumber > 1
+                ? `Welcome back ${user?.firstName}`
+                : `Welcome ${user?.firstName}`}{" "}
+              !
+            </p>
           </div>
         </Card>
         <div className="p-4 border border-gray-500 border-dashed rounded">
@@ -152,9 +164,14 @@ const Dashboard = () => {
                         {invoice.client.name}
                       </TableCell>
                       <TableCell>#{invoice.invoiceNumber}</TableCell>
-                      <TableCell>$ {invoice.total}</TableCell>
+                      <TableCell>${invoice.total}</TableCell>
                       <TableCell className="capitalize">
-                        {invoice.status}
+                        <Badge
+                          color={badgeColor[invoice.status]}
+                          className="capitalize w-16 text-center"
+                        >
+                          {invoice.status}
+                        </Badge>
                       </TableCell>
                       <TableCell>
                         {new Date(invoice.issuedDate).toLocaleDateString()}

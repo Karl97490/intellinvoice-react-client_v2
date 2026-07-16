@@ -191,7 +191,7 @@ const ALlInvoices = () => {
                 <strong>Total invoices :</strong> {invoiceStats.totalInvoices}
               </p>
               <p>
-                <strong>Total amount :</strong> $ {invoiceStats.totalAmount}
+                <strong>Total amount :</strong> ${invoiceStats.totalAmount}
               </p>
             </div>
             <div className="grid grid-cols-1 xl:grid-cols-[1fr_repeat(4,auto)] place-items-center gap-x-4">
@@ -314,7 +314,7 @@ const ALlInvoices = () => {
                         {invoice.client.name}
                       </TableCell>
                       <TableCell>#{invoice.invoiceNumber}</TableCell>
-                      <TableCell>$ {invoice.total}</TableCell>
+                      <TableCell>${invoice.total}</TableCell>
                       <TableCell className="capitalize">
                         <Dropdown
                           inline

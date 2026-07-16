@@ -42,7 +42,7 @@ const ConfirmationModal = ({
         </Button>
         <Button
           className="cursor-pointer"
-          color={status === "delete" ? "red" : "default"}
+          color={status === "delete" || status === "signout" ? "red" : "blue"}
           onClick={onConfirm}
           disabled={isLoading}
         >

@@ -12,6 +12,7 @@ import userService from "../../../services/user.service";
 import validateRequiredFields from "../../../utils/validateRequiredFields";
 import delay from "../../../utils/delay";
 import NotificationToast from "../../../components/ui/NotificationToast";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const { user, authenticateUser } = useContext(AuthContext);
@@ -29,6 +30,7 @@ const Profile = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
   const [successToast, setSuccessToast] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -109,6 +111,13 @@ const Profile = () => {
                 </p>
               </div>
               <div className="flex gap-x-2">
+                <Button
+                  color="alternative"
+                  className="cursor-pointer"
+                  onClick={() => navigate(-1)}
+                >
+                  Back
+                </Button>
                 <Button type="submit" className="cursor-pointer">
                   {isUpdating ? (
                     <>

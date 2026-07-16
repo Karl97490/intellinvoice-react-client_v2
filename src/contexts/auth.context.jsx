@@ -17,6 +17,11 @@ const AuthProviderWrapper = (props) => {
     localStorage.setItem("authToken", token);
   };
 
+  const logout = () => {
+    localStorage.removeItem("authToken");
+    authenticateUser();
+  };
+
   const authenticateUser = async () => {
     const token = localStorage.getItem("authToken");
     // Avoid to call the server
@@ -43,6 +48,7 @@ const AuthProviderWrapper = (props) => {
     authenticateUser,
     isLoggedIn,
     user,
+    logout,
   };
 
   if (isLoading) {

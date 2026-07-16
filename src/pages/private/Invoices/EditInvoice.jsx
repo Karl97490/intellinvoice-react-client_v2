@@ -233,8 +233,12 @@ const EditInvoice = () => {
                 <p className="dark:text-white">You can edit your invoice.</p>
               </div>
               <div className="flex gap-x-2">
-                <Button color="alternative" className="cursor-pointer">
-                  Cancel
+                <Button
+                  color="alternative"
+                  className="cursor-pointer"
+                  onClick={() => navigate(-1)}
+                >
+                  Back
                 </Button>
                 <Button
                   type="submit"
