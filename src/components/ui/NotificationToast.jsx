@@ -1,6 +1,6 @@
 import { Toast } from "flowbite-react";
-import { Check } from "lucide-react";
-import { TriangleAlert } from "lucide-react";
+import { Check, TriangleAlert } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const NotificationToast = ({ status, message }) => {
   const color = status === "error" ? "red" : "green";

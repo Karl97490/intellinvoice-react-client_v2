@@ -3,7 +3,6 @@ import invoiceService from "../../../services/invoice.service";
 import {
   Spinner,
   Button,
-  Toast,
   Label,
   TextInput,
   Datepicker,
@@ -35,6 +34,7 @@ const ALlInvoices = () => {
 
   const [successDeleteToast, setSuccessDeleteToast] = useState(false);
   const [successUpdateToast, setSuccessUpdateToast] = useState(false);
+  const [errorToast, setErrorToast] = useState(false);
 
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -103,8 +103,11 @@ const ALlInvoices = () => {
       await delay(2000);
       setSuccessUpdateToast(false);
     } catch (error) {
-      console.log(error.response);
+      // console.log(error);
       setIsUpdating(false);
+      setErrorToast(true);
+      await delay(2000);
+      setErrorToast(false);
     }
   };
 
@@ -128,9 +131,11 @@ const ALlInvoices = () => {
       await delay(2000);
       setSuccessDeleteToast(false);
     } catch (error) {
-      console.log(error.response);
+      // console.log(error.response);
       setIsDeleting(false);
-      setSelectedInvoice(null);
+      setErrorToast(true);
+      await delay(2000);
+      setErrorToast(false);
     }
   };
 
@@ -154,6 +159,13 @@ const ALlInvoices = () => {
         <NotificationToast
           status="success"
           message="Delete invoice successfully"
+        />
+      )}
+      {errorToast && (
+        <NotificationToast
+          className="absolute"
+          status="error"
+          message="Something went wrong. Please try again"
         />
       )}
       <h1>AllInvoices component</h1>
