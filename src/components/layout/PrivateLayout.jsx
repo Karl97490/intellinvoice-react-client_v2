@@ -11,8 +11,8 @@ const PrivateLayout = () => {
       <div className="ml-64 pt-15">
         <main className="p-6">
           <Outlet />
+          <Footer />
         </main>
-        <Footer />
       </div>
     </div>
   );
