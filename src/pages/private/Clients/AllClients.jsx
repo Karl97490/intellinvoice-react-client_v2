@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { use, useContext, useEffect, useState } from "react";
 import clientService from "../../../services/client.service";
 import { useNavigate } from "react-router-dom";
 import {
@@ -35,7 +35,8 @@ const AllClients = () => {
   const { clientStats, getData: getClientStats } =
     useContext(ClientStatsContext);
 
-  const [updateClientForm, setUpdateClientForm] = useState({
+  const [updateClientForm, setUpdateClientForm] = useState(null);
+  const [createClientForm, setCreateClientForm] = useState({
     name: "",
     email: "",
     address: "",
@@ -44,13 +45,16 @@ const AllClients = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
 
+  const [successCreateToast, setSuccessCreateToast] = useState(false);
   const [successUpdateToast, setSuccessUpdateToast] = useState(false);
   const [successDeleteToast, setSuccessDeleteToast] = useState(false);
   const [errorToast, setErrorToast] = useState(false);
 
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [openCreateModal, setOpenCreateModal] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -73,12 +77,8 @@ const AllClients = () => {
     }
   };
 
-  const handleChange = (e) => {
+  const handleUpdateChange = (e) => {
     const { name, value } = e.target;
-    if (name === "search") {
-      setSearchQuery(value);
-      return;
-    }
     setUpdateClientForm((prev) => ({
       ...prev,
       [name]: value,
@@ -99,6 +99,51 @@ const AllClients = () => {
       await delay(2000);
       setErrorToast(false);
       throw error;
+    }
+  };
+
+  const handleCreateChange = (e) => {
+    const { name, value } = e.target;
+    setCreateClientForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleCreateClient = async (e) => {
+    e.preventDefault();
+    setIsCreating(true);
+
+    const requiredFields = validateRequiredFields(createClientForm);
+    if (requiredFields.length) {
+      if (["name", "address"].some((field) => requiredFields.includes(field))) {
+        setIsCreating(false);
+        setErrorMessage("Name and address are required.");
+        return;
+      }
+    }
+
+    const body = {
+      ...createClientForm,
+    };
+    try {
+      const response = await clientService.createClient(body);
+      await getData();
+      await getClientStats();
+      setIsCreating(false);
+      setOpenCreateModal(false);
+      setErrorMessage(null);
+      setSuccessCreateToast(true);
+      await delay(2000);
+      setSuccessCreateToast(false);
+    } catch (error) {
+      setIsCreating(false);
+      if (error.response && error.response.status === 400) {
+        setErrorMessage(error.response.data.message);
+      }
+      if (error.response && error.response.status === 500) {
+        setErrorMessage("Something went wrong. Please try again.");
+      }
     }
   };
 
@@ -138,6 +183,7 @@ const AllClients = () => {
       await getData(); // refresh the page with new data
       setIsUpdating(false);
       setOpenUpdateModal(false); // close the modal after editing
+      setErrorMessage(null);
       setSuccessUpdateToast(true); // toggle success toast
       await delay(2000);
       setSuccessUpdateToast(false); // toggle success toast
@@ -191,6 +237,12 @@ const AllClients = () => {
 
   return (
     <>
+      {successCreateToast && (
+        <NotificationToast
+          status="success"
+          message="Create new client successfully"
+        />
+      )}
       {successUpdateToast && (
         <NotificationToast
           status="success"
@@ -231,13 +283,19 @@ const AllClients = () => {
                   name="search"
                   type="text"
                   value={searchQuery}
-                  onChange={handleChange}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              <div className="dark:text-white flex flex-col justify-start items-end">
+              <div className="dark:text-white flex flex-col justify-between items-end">
                 <p>
                   <strong>Total clients :</strong> {clientStats.totalClients}
                 </p>
+                <Button
+                  className="cursor-pointer"
+                  onClick={() => setOpenCreateModal(true)}
+                >
+                  Create new client
+                </Button>
               </div>
             </div>
             <Table>
@@ -295,11 +353,11 @@ const AllClients = () => {
             </Table>
           </Card>
           <Modal
-            show={openUpdateModal}
-            onClose={() => setOpenUpdateModal(false)}
+            show={openCreateModal}
+            onClose={() => setOpenCreateModal(false)}
           >
-            <ModalHeader>Update form modal Client</ModalHeader>
-            <form className="" onSubmit={(e) => handleUpdateClient(e)}>
+            <ModalHeader>Create a new client</ModalHeader>
+            <form onSubmit={(e) => handleCreateClient(e)}>
               <ModalBody>
                 <div>
                   <div className="mb-2 block">
@@ -309,8 +367,8 @@ const AllClients = () => {
                     id="name"
                     type="text"
                     name="name"
-                    value={updateClientForm.name}
-                    onChange={handleChange}
+                    value={createClientForm.name}
+                    onChange={handleCreateChange}
                     placeholder="John Doe"
                   />
                 </div>
@@ -322,8 +380,8 @@ const AllClients = () => {
                     id="email"
                     type="email"
                     name="email"
-                    value={updateClientForm.email}
-                    onChange={handleChange}
+                    value={createClientForm.email}
+                    onChange={handleCreateChange}
                     placeholder="john.doe@mail.com"
                   />
                 </div>
@@ -334,8 +392,8 @@ const AllClients = () => {
                   <Textarea
                     id="address"
                     name="address"
-                    value={updateClientForm.address}
-                    onChange={handleChange}
+                    value={createClientForm.address}
+                    onChange={handleCreateChange}
                     placeholder="Type your address..."
                     rows={4}
                   />
@@ -348,8 +406,8 @@ const AllClients = () => {
                     id="phone"
                     name="phone"
                     type="text"
-                    value={updateClientForm.phone}
-                    onChange={handleChange}
+                    value={createClientForm.phone}
+                    onChange={handleCreateChange}
                     placeholder="262-895-635"
                   />
                 </div>
@@ -366,7 +424,110 @@ const AllClients = () => {
                   <Button
                     className="cursor-pointer"
                     color="gray"
-                    onClick={() => setOpenUpdateModal(false)}
+                    onClick={() => {
+                      (setErrorMessage(null), setOpenCreateModal(false));
+                    }}
+                    disabled={isCreating}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="cursor-pointer"
+                    color="blue"
+                    disabled={isCreating}
+                  >
+                    {isCreating ? (
+                      <>
+                        <Spinner
+                          aria-label="Creating loading spinner"
+                          size="sm"
+                        />
+                        <span className="pl-3">Creating...</span>
+                      </>
+                    ) : (
+                      <>Create client</>
+                    )}
+                  </Button>
+                </div>
+              </ModalFooter>
+            </form>
+          </Modal>
+          <Modal
+            show={openUpdateModal}
+            onClose={() => setOpenUpdateModal(false)}
+          >
+            <ModalHeader>Update client informations</ModalHeader>
+            <form onSubmit={(e) => handleUpdateClient(e)}>
+              <ModalBody>
+                <div>
+                  <div className="mb-2 block">
+                    <Label htmlFor="name">Name</Label>
+                  </div>
+                  <TextInput
+                    id="name"
+                    type="text"
+                    name="name"
+                    value={updateClientForm?.name}
+                    onChange={handleUpdateChange}
+                    placeholder="John Doe"
+                  />
+                </div>
+                <div>
+                  <div className="mb-2 block">
+                    <Label htmlFor="email">Email</Label>
+                  </div>
+                  <TextInput
+                    id="email"
+                    type="email"
+                    name="email"
+                    value={updateClientForm?.email}
+                    onChange={handleUpdateChange}
+                    placeholder="john.doe@mail.com"
+                  />
+                </div>
+                <div>
+                  <div className="mb-2 block">
+                    <Label htmlFor="address">Address</Label>
+                  </div>
+                  <Textarea
+                    id="address"
+                    name="address"
+                    value={updateClientForm?.address}
+                    onChange={handleUpdateChange}
+                    placeholder="Type your address..."
+                    rows={4}
+                  />
+                </div>
+                <div>
+                  <div className="mb-2 block">
+                    <Label htmlFor="phone">Phone</Label>
+                  </div>
+                  <TextInput
+                    id="phone"
+                    name="phone"
+                    type="text"
+                    value={updateClientForm?.phone}
+                    onChange={handleUpdateChange}
+                    placeholder="262-895-635"
+                  />
+                </div>
+                <div className="flex justify-center">
+                  {errorMessage && (
+                    <p className="text-red-400 first-letter:uppercase">
+                      {errorMessage}
+                    </p>
+                  )}
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <div className="w-full flex gap-x-2 justify-end">
+                  <Button
+                    className="cursor-pointer"
+                    color="gray"
+                    onClick={() => {
+                      (setErrorMessage(null), setOpenUpdateModal(false));
+                    }}
                     disabled={isUpdating}
                   >
                     Cancel

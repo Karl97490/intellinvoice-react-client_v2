@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import invoiceService from "../../../services/invoice.service";
 import { Link, useParams } from "react-router-dom";
-import { Spinner, Button } from "flowbite-react";
+import { Spinner, Button, Card } from "flowbite-react";
 
 const InvoiceDetails = () => {
   const { invoiceId } = useParams();
@@ -39,50 +39,60 @@ const InvoiceDetails = () => {
 
   return (
     <>
-      <h1>InvoiceDetails component</h1>
-      <div className="flex gap-x-2">
-        <Button
-          color="alternative"
-          className="cursor-pointer"
-          as={Link}
-          to={`/invoices/edit/${invoice._id}`}
-        >
-          Edit invoice
-        </Button>
-        <Button className="cursor-pointer">Print or Download</Button>
-      </div>
-      <p>Invoice Number : {invoice.invoiceNumber}</p>
-      <p>Status : {invoice.status}</p>
-      <p>Issued Date : {invoice.issuedDate.toDateString()}</p>
-      <p>Due Date : {invoice.dueDate.toDateString()}</p>
-      <h2>Owner Infos</h2>
-      <p>Name : {invoice.owner.name}</p>
-      <p>Email : {invoice.owner.email}</p>
-      <p>Address : {invoice.owner.address}</p>
-      <p>Phone : {invoice.owner.phone}</p>
-      <h2>Client Infos</h2>
-      <p>Name : {invoice.client.name}</p>
-      <p>Email : {invoice.client.email}</p>
-      <p>Address : {invoice.client.address}</p>
-      <p>Phone : {invoice.client.phone}</p>
-      <h2>Items</h2>
-      {invoice.items.map((item, index) => {
-        return (
-          <div key={index} className="flex gap-x-2">
-            <p>Title : {item.title}</p>
-            <p>Quantity : {item.quantity}</p>
-            <p>Tax Rate : {item.taxRate}%</p>
-            <p>Unit Price : ${item.unitPrice}</p>
+      <section>
+        <Card className="mb-4">
+          <div className="flex justify-between items-end">
+            <div className="flex flex-col gap-y-1">
+              <h2 className="dark:text-white">Invoice Details</h2>
+              <p className="dark:text-white">
+                You can see the details and print or download the invoice.
+              </p>
+            </div>
+            <div className="flex gap-x-2">
+              <Button color="alternative" className="cursor-pointer">
+                Cancel
+              </Button>
+              <Button className="cursor-pointer">Print or Download</Button>
+            </div>
           </div>
-        );
-      })}
-      <h2>Notes</h2>
-      <p>{invoice.notes}</p>
-      <h2>Totals</h2>
-      <p>Tax Rate : {invoice.taxRate.toFixed(1)}%</p>
-      <p>Tax Amount : ${invoice.taxAmount.toFixed(1)}</p>
-      <p>Sub Total : ${invoice.subTotal.toFixed(1)}</p>
-      <p>Total : ${invoice.total.toFixed(1)}</p>
+        </Card>
+        <div className="p-4 border border-gray-500 border-dashed rounded">
+          <Card>
+            <p>Invoice Number : {invoice.invoiceNumber}</p>
+            <p>Status : {invoice.status}</p>
+            <p>Issued Date : {invoice.issuedDate.toDateString()}</p>
+            <p>Due Date : {invoice.dueDate.toDateString()}</p>
+            <h2>Owner Infos</h2>
+            <p>Name : {invoice.owner.name}</p>
+            <p>Email : {invoice.owner.email}</p>
+            <p>Address : {invoice.owner.address}</p>
+            <p>Phone : {invoice.owner.phone}</p>
+            <h2>Client Infos</h2>
+            <p>Name : {invoice.client.name}</p>
+            <p>Email : {invoice.client.email}</p>
+            <p>Address : {invoice.client.address}</p>
+            <p>Phone : {invoice.client.phone}</p>
+            <h2>Items</h2>
+            {invoice.items.map((item, index) => {
+              return (
+                <div key={index} className="flex gap-x-2">
+                  <p>Title : {item.title}</p>
+                  <p>Quantity : {item.quantity}</p>
+                  <p>Tax Rate : {item.taxRate}%</p>
+                  <p>Unit Price : ${item.unitPrice}</p>
+                </div>
+              );
+            })}
+            <h2>Notes</h2>
+            <p>{invoice.notes}</p>
+            <h2>Totals</h2>
+            <p>Tax Rate : {invoice.taxRate.toFixed(1)}%</p>
+            <p>Tax Amount : ${invoice.taxAmount.toFixed(1)}</p>
+            <p>Sub Total : ${invoice.subTotal.toFixed(1)}</p>
+            <p>Total : ${invoice.total.toFixed(1)}</p>
+          </Card>
+        </div>
+      </section>
     </>
   );
 };

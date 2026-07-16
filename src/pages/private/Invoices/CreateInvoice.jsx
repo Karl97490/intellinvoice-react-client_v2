@@ -541,7 +541,7 @@ const CreateInvoice = () => {
                                 name="taxRate"
                                 type="number"
                                 data-section="items"
-                                value={item.taxRate}
+                                value={createInvoiceForm.taxRate}
                                 disabled
                               />
                             </div>
