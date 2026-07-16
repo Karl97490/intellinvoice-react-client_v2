@@ -8,10 +8,18 @@ import {
   Datepicker,
   Dropdown,
   DropdownItem,
+  DropdownDivider,
   Checkbox,
   Select,
+  Card,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeadCell,
+  TableRow,
 } from "flowbite-react";
-import { Check } from "lucide-react";
+import { Check, Eye, Ellipsis } from "lucide-react";
 import { Link } from "react-router-dom";
 import delay from "../../../utils/delay";
 import useDebounce from "../../../hooks/useDebounce";
@@ -159,108 +167,164 @@ const ALlInvoices = () => {
           message="Something went wrong. Please try again"
         />
       )}
-      <h1>AllInvoices component</h1>
-      <div className="flex gap-x-2">
-        <span>Total invoices : {invoiceStats.totalInvoices}</span>
-        <span>Total amount : ${invoiceStats.totalAmount}</span>
-      </div>
-      <div className="flex items-center gap-x-2 my-4">
-        <div>
-          <div className="mb-2 block">
-            <Label htmlFor="search">Search</Label>
+      <section>
+        <Card className="mb-4">
+          <div className="flex flex-col gap-y-1">
+            <h2 className="dark:text-white">All Invoices</h2>
+            <p className="dark:text-white">
+              You can browse, manage and see all your invoices.
+            </p>
           </div>
-          <TextInput
-            id="search"
-            className="w-100"
-            placeholder="search"
-            name="search"
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+        </Card>
+        <div className="p-4 border border-gray-500 border-dashed rounded">
+          <Card>
+            <div className="dark:text-white flex gap-x-2">
+              <p>
+                <strong>Total invoices :</strong> {invoiceStats.totalInvoices}
+              </p>
+              <p>
+                <strong>Total amount :</strong> $ {invoiceStats.totalAmount}
+              </p>
+            </div>
+            <div className="grid grid-cols-1 xl:grid-cols-[1fr_repeat(4,auto)] place-items-center gap-x-4">
+              <div className="w-full">
+                <div className="mb-2 block">
+                  <Label htmlFor="search">Search</Label>
+                </div>
+                <TextInput
+                  id="search"
+                  placeholder="search"
+                  name="search"
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+              <div className="w-full">
+                <div className="mb-2 block">
+                  <Label htmlFor="issuedDate">Issued Date</Label>
+                </div>
+                <Datepicker
+                  id="issuedDate"
+                  value={issuedDateQuery}
+                  onChange={(date) => setIssuedDateQuery(date ?? undefined)}
+                />
+              </div>
+              <div className="w-full">
+                <div className="mb-2 block">
+                  <Label htmlFor="dueDate">Due Date</Label>
+                </div>
+                <Datepicker
+                  id="dueDate"
+                  value={dueDateQuery}
+                  onChange={(date) => setDueDateQuery(date ?? undefined)}
+                />
+              </div>
+              <div className="w-full">
+                <div className="mb-2 block">
+                  <Label htmlFor="status">Status</Label>
+                </div>
+                <Dropdown
+                  className="cursor-pointer"
+                  label="filter by status"
+                  color="alternative"
+                  dismissOnClick={false}
+                >
+                  <DropdownItem>
+                    <Checkbox
+                      id="pending"
+                      value="pending"
+                      checked={statusQuery.includes("pending")}
+                      onChange={handleFilterStatus}
+                    />
+                    <Label htmlFor="pending" className="ml-3">
+                      Pending
+                    </Label>
+                  </DropdownItem>
+                  <DropdownItem>
+                    <Checkbox
+                      className="cursor-pointer"
+                      id="unpaid"
+                      value="unpaid"
+                      checked={statusQuery.includes("unpaid")}
+                      onChange={handleFilterStatus}
+                    />
+                    <Label htmlFor="unpaid" className="ml-3">
+                      Unpaid
+                    </Label>
+                  </DropdownItem>
+                  <DropdownItem>
+                    <Checkbox
+                      className="cursor-pointer"
+                      id="overdue"
+                      value="overdue"
+                      checked={statusQuery.includes("overdue")}
+                      onChange={handleFilterStatus}
+                    />
+                    <Label htmlFor="overdue" className="ml-3">
+                      Overdue
+                    </Label>
+                  </DropdownItem>
+                  <DropdownItem>
+                    <Checkbox
+                      className="cursor-pointer"
+                      id="paid"
+                      value="paid"
+                      checked={statusQuery.includes("paid")}
+                      onChange={handleFilterStatus}
+                    />
+                    <Label htmlFor="paid" className="ml-3">
+                      Paid
+                    </Label>
+                  </DropdownItem>
+                </Dropdown>
+              </div>
+            </div>
+          </Card>
+          <Card className="overflow-x-auto">
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableHeadCell>Client</TableHeadCell>
+                  <TableHeadCell>Invoice Number</TableHeadCell>
+                  <TableHeadCell>Amount</TableHeadCell>
+                  <TableHeadCell>Status</TableHeadCell>
+                  <TableHeadCell>Issued Date</TableHeadCell>
+                  <TableHeadCell>
+                    <span className="sr-only">Actions</span>
+                  </TableHeadCell>
+                </TableRow>
+              </TableHead>
+              <TableBody className="divide-y">
+                <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                  <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                    Alex Doe
+                  </TableCell>
+                  <TableCell>#INV-001</TableCell>
+                  <TableCell>$ 1200</TableCell>
+                  <TableCell className="capitalize">pending</TableCell>
+                  <TableCell>21/12/2026</TableCell>
+                  <TableCell>
+                    <Dropdown
+                      inline
+                      arrowIcon={false}
+                      label={<Ellipsis className="cursor-pointer" size={20} />}
+                      className=" dark:text-white"
+                      placement="right-start"
+                    >
+                      <DropdownItem>Show</DropdownItem>
+                      <DropdownItem>Edit</DropdownItem>
+                      <DropdownDivider />
+                      <DropdownItem>Delete</DropdownItem>
+                    </Dropdown>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </Card>
         </div>
-        <div>
-          <div className="mb-2 block">
-            <Label htmlFor="issuedDate">Issued Date</Label>
-          </div>
-          <Datepicker
-            id="issuedDate"
-            className="w-70"
-            value={issuedDateQuery}
-            onChange={(date) => setIssuedDateQuery(date ?? undefined)}
-          />
-        </div>
-        <div>
-          <div className="mb-2 block">
-            <Label htmlFor="dueDate">Due Date</Label>
-          </div>
-          <Datepicker
-            id="dueDate"
-            className="w-70"
-            value={dueDateQuery}
-            onChange={(date) => setDueDateQuery(date ?? undefined)}
-          />
-        </div>
-        <div>
-          <div className="mb-2 block">
-            <Label htmlFor="status">Status</Label>
-          </div>
-          <Dropdown
-            className="cursor-pointer"
-            label="filter by status"
-            color="alternative"
-            dismissOnClick={false}
-          >
-            <DropdownItem>
-              <Checkbox
-                id="pending"
-                value="pending"
-                checked={statusQuery.includes("pending")}
-                onChange={handleFilterStatus}
-              />
-              <Label htmlFor="pending" className="ml-3">
-                Pending
-              </Label>
-            </DropdownItem>
-            <DropdownItem>
-              <Checkbox
-                className="cursor-pointer"
-                id="unpaid"
-                value="unpaid"
-                checked={statusQuery.includes("unpaid")}
-                onChange={handleFilterStatus}
-              />
-              <Label htmlFor="unpaid" className="ml-3">
-                Unpaid
-              </Label>
-            </DropdownItem>
-            <DropdownItem>
-              <Checkbox
-                className="cursor-pointer"
-                id="overdue"
-                value="overdue"
-                checked={statusQuery.includes("overdue")}
-                onChange={handleFilterStatus}
-              />
-              <Label htmlFor="overdue" className="ml-3">
-                Overdue
-              </Label>
-            </DropdownItem>
-            <DropdownItem>
-              <Checkbox
-                className="cursor-pointer"
-                id="paid"
-                value="paid"
-                checked={statusQuery.includes("paid")}
-                onChange={handleFilterStatus}
-              />
-              <Label htmlFor="paid" className="ml-3">
-                Paid
-              </Label>
-            </DropdownItem>
-          </Dropdown>
-        </div>
-      </div>
+      </section>
+
       {invoices.map((invoice) => {
         return (
           <div key={invoice._id}>
