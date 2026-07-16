@@ -13,7 +13,10 @@ const Dashboard = () => {
 
   const getData = async () => {
     try {
-      const response = await invoiceService.getAllInvoices({ limit: 5 });
+      const response = await invoiceService.getAllInvoices({
+        limit: 5,
+        sort: { createdAt: -1 },
+      });
       console.log(response);
       setIsLoading(false);
       setInvoices(response.data);
