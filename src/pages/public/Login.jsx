@@ -39,16 +39,6 @@ const Login = () => {
       const response = await authService.login(body);
       storeToken(response.data.authToken); // store token in the local storage
       await authenticateUser(); // verify token validity with server
-      // Logging state loading
-      setIsLogging(false);
-      // Pop up success toast
-      setSuccessToast(true);
-      // Redirecting loading state true
-      setIsRedirecting(true);
-      // Waiting time before redirecting
-      await delay(2000);
-      // Navigate to dashboard page
-      navigate("/dashboard");
     } catch (error) {
       console.log(error.response);
       setIsLogging(false);
