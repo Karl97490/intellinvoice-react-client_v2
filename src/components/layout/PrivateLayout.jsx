@@ -5,11 +5,11 @@ import Footer from "./Footer";
 
 const PrivateLayout = () => {
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen">
+      <NavBar />
       <SideBar />
-      <div className="flex-1">
-        <NavBar />
-        <main>
+      <div className="ml-64 pt-15">
+        <main className="p-6">
           <Outlet />
         </main>
         <Footer />

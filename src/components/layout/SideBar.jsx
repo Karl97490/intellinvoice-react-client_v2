@@ -14,7 +14,7 @@ const SideBar = () => {
 
   if (isLoggedIn) {
     return (
-      <Sidebar className="h-screen">
+      <Sidebar className="fixed left-0 top-15 h-[calc(100vh-4rem)] w-64">
         <SidebarItems>
           <SidebarItemGroup>
             <SidebarItem href="#" icon={undefined}>

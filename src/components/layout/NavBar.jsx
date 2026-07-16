@@ -19,7 +19,7 @@ const NavBar = () => {
 
   if (isLoggedIn) {
     return (
-      <Navbar fluid rounded>
+      <Navbar fluid rounded className="fixed top-0 left-0 right-0 z-50">
         <NavbarBrand>
           <img
             src="/favicon.svg"
@@ -54,14 +54,13 @@ const NavBar = () => {
             <DropdownDivider />
             <DropdownItem>Sign out</DropdownItem>
           </Dropdown>
-          <NavbarToggle />
         </div>
       </Navbar>
     );
   }
 
   return (
-    <Navbar fluid rounded>
+    <Navbar fluid rounded className="fixed top-0 left-0 right-0 z-50">
       <NavbarBrand>
         <img
           src="/favicon.svg"
