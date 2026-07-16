@@ -11,7 +11,7 @@ import {
   Button,
 } from "flowbite-react";
 import { useContext, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import { AuthContext } from "../../contexts/auth.context";
 import ConfirmationModal from "../ui/ConfirmationModal";
 
@@ -52,8 +52,12 @@ const NavBar = () => {
                   {user?.email}
                 </span>
               </DropdownHeader>
-              <DropdownItem>Dashboard</DropdownItem>
-              <DropdownItem>Profile</DropdownItem>
+              <DropdownItem as={Link} to="/dashboard">
+                Dashboard
+              </DropdownItem>
+              <DropdownItem as={Link} to="/profile">
+                Profile
+              </DropdownItem>
               <DropdownDivider />
               <DropdownItem onClick={() => setOpenLogoutModal(true)}>
                 Sign out

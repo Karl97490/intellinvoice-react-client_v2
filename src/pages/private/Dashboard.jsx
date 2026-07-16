@@ -14,7 +14,7 @@ import {
 } from "flowbite-react";
 import { Link } from "react-router-dom";
 import { InvoiceStatsContext } from "../../contexts/invoiceStats.context";
-import { CircleCheck, CircleDollarSign, Receipt, Eye } from "lucide-react";
+import { CircleDollarSign, Receipt, Eye, CornerDownRight } from "lucide-react";
 import { AuthContext } from "../../contexts/auth.context";
 
 const Dashboard = () => {
@@ -110,18 +110,27 @@ const Dashboard = () => {
           <Card className="mb-4">
             <div className="dark:text-white">
               <h3 className="mb-2">Quick overview</h3>
-              <ul className="max-w-md space-y-1 text-body list-inside">
+              <ul className="space-y-1 text-body list-inside">
                 <li className="flex gap-x-2 items-center">
-                  <CircleCheck size={16} />
-                  At least 10 characters
+                  <CornerDownRight size={16} />
+                  You have created {invoiceStats.totalInvoices} invoices in
+                  total
                 </li>
                 <li className="flex gap-x-2 items-center">
-                  <CircleCheck size={16} />
-                  At least 10 characters
+                  <CornerDownRight size={16} />
+                  There are{" "}
+                  {invoiceStats.totalOverdue +
+                    invoiceStats.totalUnpaid +
+                    invoiceStats.totalPending}{" "}
+                  outstanding invoices awaiting payment
                 </li>
                 <li className="flex gap-x-2 items-center">
-                  <CircleCheck size={16} />
-                  At least 10 characters
+                  <CornerDownRight size={16} />
+                  You have generated ${invoiceStats.totalPaid} in paid invoices
+                </li>
+                <li className="flex gap-x-2 items-center">
+                  <CornerDownRight size={16} /> {invoiceStats.totalOverdue}{" "}
+                  invoices require immediate attention due to overdue payments
                 </li>
               </ul>
             </div>
