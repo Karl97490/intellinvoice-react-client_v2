@@ -3,9 +3,11 @@ import { AuthContext } from "../../../contexts/auth.context";
 import { Label, TextInput, Textarea, Button, Spinner } from "flowbite-react";
 import userService from "../../../services/user.service";
 import validateRequiredFields from "../../../utils/validateRequiredFields";
+import delay from "../../../utils/delay";
+import NotificationToast from "../../../components/ui/NotificationToast";
 
 const Profile = () => {
-  const { user } = useContext(AuthContext);
+  const { user, authenticateUser } = useContext(AuthContext);
   const [userForm, setUserForm] = useState({
     firstName: user.firstName || "",
     lastName: user.lastName || "",
@@ -18,6 +20,8 @@ const Profile = () => {
     },
   });
   const [errorMessage, setErrorMessage] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [successToast, setSuccessToast] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -43,10 +47,11 @@ const Profile = () => {
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     console.log("updating profile user with id: " + user._id);
+    setIsUpdating(true);
 
     const requiredFields = validateRequiredFields(userForm);
     if (requiredFields.length) {
-      console.log(requiredFields);
+      setIsUpdating(false);
       if (
         ["firstName", "lastName"].some((field) =>
           requiredFields.includes(field),
@@ -64,8 +69,15 @@ const Profile = () => {
     try {
       const response = await userService.updateUser(user._id, body);
       console.log(response);
+      await delay(2000);
+      setIsUpdating(false);
+      await authenticateUser();
+      setSuccessToast(true);
+      await delay(2000);
+      setSuccessToast(false);
     } catch (error) {
       console.log(error.response);
+      setIsUpdating(false);
       if (error.response && error.response.status === 400) {
         setErrorMessage(error.response.data.message);
       }
@@ -77,6 +89,12 @@ const Profile = () => {
 
   return (
     <>
+      {successToast && (
+        <NotificationToast
+          status="success"
+          message="Profile saved successfully"
+        />
+      )}
       <h1>Profile component</h1>
       <form
         className="flex max-w-md flex-col gap-4"
@@ -186,15 +204,14 @@ const Profile = () => {
           )}
         </div>
         <Button type="submit" className="cursor-pointer">
-          Save profile
-          {/* {isCreating ? (
+          {isUpdating ? (
             <>
               <Spinner aria-label="Spinner loading button" size="sm" />
               <span className="pl-3">Saving...</span>
             </>
           ) : (
-            <>Save client</>
-          )} */}
+            <>Save profile</>
+          )}
         </Button>
       </form>
     </>
