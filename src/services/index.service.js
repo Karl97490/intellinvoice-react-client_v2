@@ -3,7 +3,7 @@ import axios from "axios";
 class Service {
   constructor() {
     this.service = axios.create({
-      baseURL: import.meta.env.VITE_API_UR || "http://localhost:5005",
+      baseURL: import.meta.env.VITE_API_URL || "http://localhost:5005",
     });
     this.service.interceptors.request.use((config) => {
       const storedToken = localStorage.getItem("authToken");
