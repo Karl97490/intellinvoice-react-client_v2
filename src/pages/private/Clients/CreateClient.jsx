@@ -51,7 +51,6 @@ const CreateClient = () => {
     const body = {
       ...clientForm,
     };
-
     try {
       await clientService.createClient(body);
       setIsCreating(false);

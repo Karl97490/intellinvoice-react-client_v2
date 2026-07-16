@@ -547,7 +547,7 @@ const CreateInvoice = () => {
             </p>
           )}
         </div>
-        <Button type="submit" className="cursor-pointer">
+        <Button type="submit" className="cursor-pointer" disabled={isCreating}>
           {isCreating ? (
             <>
               <Spinner aria-label="Saving loading spinner" size="sm" />

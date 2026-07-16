@@ -88,10 +88,8 @@ const ALlInvoices = () => {
         selectedInvoice._id,
         body,
       );
-      console.log(response);
-      await delay(2000);
+      await getData();
       setIsUpdating(false);
-      getData();
       setOpenUpdateModal(false);
       setSelectedInvoice(null);
       setPendingStatus(null);
@@ -115,11 +113,9 @@ const ALlInvoices = () => {
     setIsDeleting(true);
     try {
       const response = await invoiceService.deleteInvoice(selectedInvoice._id);
-      console.log(response);
-      await delay(2000);
+      await getData();
+      await getInvoiceStats();
       setIsDeleting(false);
-      getData();
-      getInvoiceStats();
       setOpenDeleteModal(false);
       setSelectedInvoice(null);
       setSuccessDeleteToast(true);

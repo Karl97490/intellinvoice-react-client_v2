@@ -125,14 +125,13 @@ const AllClients = () => {
         selectedClient._id,
         body,
       );
-      getData(); // refresh the page with new data
+      await getData(); // refresh the page with new data
       setIsUpdating(false);
       setOpenUpdateModal(false); // close the modal after editing
       setSuccessUpdateToast(true); // toggle success toast
       await delay(2000);
       setSuccessUpdateToast(false); // toggle success toast
     } catch (error) {
-      console.log(error.response);
       setIsUpdating(false);
       if (error.response && error.response.status === 400) {
         setErrorMessage(error.response.data.message);
@@ -153,18 +152,19 @@ const AllClients = () => {
     setIsDeleting(true);
     try {
       const response = await clientService.deleteClient(selectedClient._id);
+      await getData();
+      await getClientStats();
       setIsDeleting(false);
-      getData();
-      getClientStats();
       setOpenDeleteModal(false);
       setSelectedClient(null);
       setSuccessDeleteToast(true);
       await delay(2000);
       setSuccessDeleteToast(false);
     } catch (error) {
-      console.log(error.response);
       setIsLoading(false);
-      // error message or toast
+      setErrorToast(true);
+      await delay(2000);
+      setErrorToast(false);
     }
   };
 
