@@ -11,9 +11,19 @@ import {
   Label,
   TextInput,
   Textarea,
+  Card,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeadCell,
+  TableRow,
+  Dropdown,
+  DropdownItem,
+  DropdownDivider,
 } from "flowbite-react";
 import validateRequiredFields from "../../../utils/validateRequiredFields";
-import { Check } from "lucide-react";
+import { Check, Ellipsis } from "lucide-react";
 import delay from "../../../utils/delay";
 import useDebounce from "../../../hooks/useDebounce";
 import { ClientStatsContext } from "../../../contexts/clientStats.context";
@@ -199,140 +209,202 @@ const AllClients = () => {
           message="Something went wrong. Please try again"
         />
       )}
-      <h1>AllClients component...</h1>
-      <span>Total clients : {clientStats.totalClients}</span>
-      <TextInput
-        className="w-100"
-        placeholder="search"
-        name="search"
-        type="text"
-        value={searchQuery}
-        onChange={handleChange}
-      />
-      {clients.map((client) => {
-        return (
-          <div key={client._id}>
-            <span>{client.name}</span>
-            <Button
-              color="red"
-              className="cursor-pointer"
-              onClick={() => handleDeleteModal(client)}
-            >
-              Delete
-            </Button>
-            <Button
-              color="blue"
-              className="cursor-pointer"
-              onClick={() => handleUpdateModal(client)}
-            >
-              Edit
-            </Button>
+      <section>
+        <Card className="mb-4">
+          <div className="flex flex-col gap-y-1">
+            <h2 className="dark:text-white">All Clients</h2>
+            <p className="dark:text-white">
+              You can browse, manage and see all your clients.
+            </p>
           </div>
-        );
-      })}
-      <Modal show={openUpdateModal} onClose={() => setOpenUpdateModal(false)}>
-        <ModalHeader>Update form modal Client</ModalHeader>
-        <form className="" onSubmit={(e) => handleUpdateClient(e)}>
-          <ModalBody>
-            <div>
-              <div className="mb-2 block">
-                <Label htmlFor="name">Name</Label>
+        </Card>
+        <div className="p-4 border border-gray-500 border-dashed rounded">
+          <Card className="overflow-x-auto">
+            <div className="flex justify-between mb-2">
+              <div className="w-120">
+                <div className="mb-2 block">
+                  <Label htmlFor="search">Search</Label>
+                </div>
+                <TextInput
+                  id="search"
+                  placeholder="search"
+                  name="search"
+                  type="text"
+                  value={searchQuery}
+                  onChange={handleChange}
+                />
               </div>
-              <TextInput
-                id="name"
-                type="text"
-                name="name"
-                value={updateClientForm.name}
-                onChange={handleChange}
-                placeholder="John Doe"
-              />
-            </div>
-            <div>
-              <div className="mb-2 block">
-                <Label htmlFor="email">Email</Label>
-              </div>
-              <TextInput
-                id="email"
-                type="email"
-                name="email"
-                value={updateClientForm.email}
-                onChange={handleChange}
-                placeholder="john.doe@mail.com"
-              />
-            </div>
-            <div>
-              <div className="mb-2 block">
-                <Label htmlFor="address">Address</Label>
-              </div>
-              <Textarea
-                id="address"
-                name="address"
-                value={updateClientForm.address}
-                onChange={handleChange}
-                placeholder="Type your address..."
-                rows={4}
-              />
-            </div>
-            <div>
-              <div className="mb-2 block">
-                <Label htmlFor="phone">Phone</Label>
-              </div>
-              <TextInput
-                id="phone"
-                name="phone"
-                type="text"
-                value={updateClientForm.phone}
-                onChange={handleChange}
-                placeholder="262-895-635"
-              />
-            </div>
-            <div className="flex justify-center">
-              {errorMessage && (
-                <p className="text-red-400 first-letter:uppercase">
-                  {errorMessage}
+              <div className="dark:text-white flex flex-col justify-start items-end">
+                <p>
+                  <strong>Total clients :</strong> {clientStats.totalClients}
                 </p>
-              )}
+              </div>
             </div>
-          </ModalBody>
-          <ModalFooter>
-            <div className="w-full flex gap-x-2 justify-end">
-              <Button
-                className="cursor-pointer"
-                color="gray"
-                onClick={() => setOpenUpdateModal(false)}
-                disabled={isUpdating}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                className="cursor-pointer"
-                color="blue"
-                disabled={isUpdating}
-              >
-                {isUpdating ? (
-                  <>
-                    <Spinner aria-label="Updating loading spinner" size="sm" />
-                    <span className="pl-3">Editing...</span>
-                  </>
-                ) : (
-                  <>Edit client</>
-                )}
-              </Button>
-            </div>
-          </ModalFooter>
-        </form>
-      </Modal>
-      <ConfirmationModal
-        show={openDeleteModal}
-        status={"delete"}
-        title={"Delete client"}
-        message={"Do you wish to delete this client ?"}
-        confirmText={"Delete"}
-        isLoading={isDeleting}
-        onClose={() => setOpenDeleteModal(false)}
-        onConfirm={handleDeleteClient}
-      />
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableHeadCell>Name</TableHeadCell>
+                  <TableHeadCell>Email</TableHeadCell>
+                  <TableHeadCell>Address</TableHeadCell>
+                  <TableHeadCell>Phone</TableHeadCell>
+                  <TableHeadCell>
+                    <span className="sr-only">Actions</span>
+                  </TableHeadCell>
+                </TableRow>
+              </TableHead>
+              <TableBody className="divide-y">
+                {clients.map((client) => {
+                  return (
+                    <TableRow
+                      key={client._id}
+                      className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                    >
+                      <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                        {client.name}
+                      </TableCell>
+                      <TableCell>{client.email || "N/A"}</TableCell>
+                      <TableCell>{client.address}</TableCell>
+                      <TableCell>{client.phone || "N/A"}</TableCell>
+                      <TableCell>
+                        <Dropdown
+                          inline
+                          arrowIcon={false}
+                          label={
+                            <Ellipsis className="cursor-pointer" size={20} />
+                          }
+                          className=" dark:text-white"
+                          placement="right-start"
+                        >
+                          <DropdownItem
+                            onClick={() => handleUpdateModal(client)}
+                          >
+                            Edit
+                          </DropdownItem>
+                          <DropdownDivider />
+                          <DropdownItem
+                            onClick={() => handleDeleteModal(client)}
+                          >
+                            Delete
+                          </DropdownItem>
+                        </Dropdown>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </Card>
+          <Modal
+            show={openUpdateModal}
+            onClose={() => setOpenUpdateModal(false)}
+          >
+            <ModalHeader>Update form modal Client</ModalHeader>
+            <form className="" onSubmit={(e) => handleUpdateClient(e)}>
+              <ModalBody>
+                <div>
+                  <div className="mb-2 block">
+                    <Label htmlFor="name">Name</Label>
+                  </div>
+                  <TextInput
+                    id="name"
+                    type="text"
+                    name="name"
+                    value={updateClientForm.name}
+                    onChange={handleChange}
+                    placeholder="John Doe"
+                  />
+                </div>
+                <div>
+                  <div className="mb-2 block">
+                    <Label htmlFor="email">Email</Label>
+                  </div>
+                  <TextInput
+                    id="email"
+                    type="email"
+                    name="email"
+                    value={updateClientForm.email}
+                    onChange={handleChange}
+                    placeholder="john.doe@mail.com"
+                  />
+                </div>
+                <div>
+                  <div className="mb-2 block">
+                    <Label htmlFor="address">Address</Label>
+                  </div>
+                  <Textarea
+                    id="address"
+                    name="address"
+                    value={updateClientForm.address}
+                    onChange={handleChange}
+                    placeholder="Type your address..."
+                    rows={4}
+                  />
+                </div>
+                <div>
+                  <div className="mb-2 block">
+                    <Label htmlFor="phone">Phone</Label>
+                  </div>
+                  <TextInput
+                    id="phone"
+                    name="phone"
+                    type="text"
+                    value={updateClientForm.phone}
+                    onChange={handleChange}
+                    placeholder="262-895-635"
+                  />
+                </div>
+                <div className="flex justify-center">
+                  {errorMessage && (
+                    <p className="text-red-400 first-letter:uppercase">
+                      {errorMessage}
+                    </p>
+                  )}
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <div className="w-full flex gap-x-2 justify-end">
+                  <Button
+                    className="cursor-pointer"
+                    color="gray"
+                    onClick={() => setOpenUpdateModal(false)}
+                    disabled={isUpdating}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="cursor-pointer"
+                    color="blue"
+                    disabled={isUpdating}
+                  >
+                    {isUpdating ? (
+                      <>
+                        <Spinner
+                          aria-label="Updating loading spinner"
+                          size="sm"
+                        />
+                        <span className="pl-3">Editing...</span>
+                      </>
+                    ) : (
+                      <>Edit client</>
+                    )}
+                  </Button>
+                </div>
+              </ModalFooter>
+            </form>
+          </Modal>
+          <ConfirmationModal
+            show={openDeleteModal}
+            status={"delete"}
+            title={"Delete client"}
+            message={"Do you wish to delete this client ?"}
+            confirmText={"Delete"}
+            isLoading={isDeleting}
+            onClose={() => setOpenDeleteModal(false)}
+            onConfirm={handleDeleteClient}
+          />
+        </div>
+      </section>
     </>
   );
 };
