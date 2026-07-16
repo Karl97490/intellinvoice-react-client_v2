@@ -42,8 +42,8 @@ const CreateClient = () => {
 
     const requiredFields = validateRequiredFields(clientForm);
     if (requiredFields.length) {
-      setIsCreating(false);
       if (["name", "address"].some((field) => requiredFields.includes(field))) {
+        setIsCreating(false);
         setErrorMessage("Name and address are required.");
         return;
       }
