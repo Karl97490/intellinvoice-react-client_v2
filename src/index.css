@@ -2,6 +2,53 @@
 @import "flowbite-react/plugin/tailwindcss";
 @source "../.flowbite-react/class-list.json";
 
+@theme {
+  --font-display: "Urbanist", sans-serif;
+  --font-headings: "Inter", sans-serif;
+
+  /* --bg-color: #fcfbfc; */
+}
+
+@layer base {
+  html {
+    font-family: var(--font-display);
+  }
+
+  h1 {
+    @apply text-3xl font-bold tracking-tight text-gray-900 dark:text-white;
+    font-family: var(--font-display);
+  }
+
+  h2 {
+    @apply text-2xl font-semibold tracking-tight text-gray-900 dark:text-white;
+    font-family: var(--font-display);
+  }
+
+  h3 {
+    @apply text-xl font-semibold text-gray-900 dark:text-white;
+    font-family: var(--font-display);
+  }
+
+  h4 {
+    @apply text-lg font-medium text-gray-900 dark:text-white;
+    font-family: var(--font-display);
+  }
+
+  h5 {
+    @apply text-base font-medium text-gray-900 dark:text-white;
+    font-family: var(--font-display);
+  }
+
+  h6 {
+    @apply text-sm font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400;
+    font-family: var(--font-display);
+  }
+
+  p {
+    @apply text-sm leading-6 text-gray-600 dark:text-gray-400;
+  }
+}
+
 :root {
   --sans: system-ui, "Segoe UI", Roboto, sans-serif;
   --heading: system-ui, "Segoe UI", Roboto, sans-serif;

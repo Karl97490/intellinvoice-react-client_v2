@@ -8,38 +8,37 @@ import {
 import { ChartPie } from "lucide-react";
 import { useContext } from "react";
 import { AuthContext } from "../../contexts/auth.context";
+import { NavLink } from "react-router-dom";
 
 const SideBar = () => {
   const { isLoggedIn } = useContext(AuthContext);
 
   if (isLoggedIn) {
     return (
-      <Sidebar className="fixed left-0 top-15 h-[calc(100vh-4rem)] w-64">
-        <SidebarItems>
+      <Sidebar className="fixed left-0 top-15 h-[calc(100vh-3.5rem)] w-64">
+        <SidebarItems className="h-full flex flex-col justify-between">
           <SidebarItemGroup>
-            <SidebarItem href="#" icon={undefined}>
+            <SidebarItem as={NavLink} to="/dashboard" icon={undefined}>
               Dashboard
             </SidebarItem>
-            <SidebarCollapse icon={undefined} label="E-commerce">
-              <SidebarItem href="#">Products</SidebarItem>
-              <SidebarItem href="#">Sales</SidebarItem>
-              <SidebarItem href="#">Refunds</SidebarItem>
-              <SidebarItem href="#">Shipping</SidebarItem>
+            <SidebarCollapse icon={undefined} label="Invoices">
+              <SidebarItem as={NavLink} to="/invoices">
+                List All
+              </SidebarItem>
+              <SidebarItem as={NavLink} to="/invoices/new">
+                Add invoice
+              </SidebarItem>
             </SidebarCollapse>
-            <SidebarItem href="#" icon={undefined}>
-              Inbox
+            <SidebarItem as={NavLink} to="/clients" icon={undefined}>
+              Clients
             </SidebarItem>
-            <SidebarItem href="#" icon={undefined}>
-              Users
+            <SidebarItem as={NavLink} to="/profile" icon={undefined}>
+              Profile
             </SidebarItem>
+          </SidebarItemGroup>
+          <SidebarItemGroup>
             <SidebarItem href="#" icon={undefined}>
-              Products
-            </SidebarItem>
-            <SidebarItem href="#" icon={undefined}>
-              Sign In
-            </SidebarItem>
-            <SidebarItem href="#" icon={undefined}>
-              Sign Up
+              Sign Out
             </SidebarItem>
           </SidebarItemGroup>
         </SidebarItems>
