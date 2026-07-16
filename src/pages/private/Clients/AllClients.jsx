@@ -110,8 +110,8 @@ const AllClients = () => {
 
     const requiredFields = validateRequiredFields(updateClientForm);
     if (requiredFields.length) {
-      setIsUpdating(false);
       if (["name", "address"].some((field) => requiredFields.includes(field))) {
+        setIsUpdating(false);
         setErrorMessage("Name and address are required.");
         return;
       }

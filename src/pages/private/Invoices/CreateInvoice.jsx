@@ -136,21 +136,21 @@ const CreateInvoice = () => {
       createInvoiceForm.client,
     );
     if (requiredFieldsOwner.length) {
-      setIsCreating(false);
       if (
         ["name", "address"].some((field) => requiredFieldsOwner.includes(field))
       ) {
+        setIsCreating(false);
         setErrorMessage("Owner name and address are required.");
         return;
       }
     }
     if (requiredFieldsClient.length) {
-      setIsCreating(false);
       if (
         ["name", "address"].some((field) =>
           requiredFieldsClient.includes(field),
         )
       ) {
+        setIsCreating(false);
         setErrorMessage("Client name and address are required.");
         return;
       }

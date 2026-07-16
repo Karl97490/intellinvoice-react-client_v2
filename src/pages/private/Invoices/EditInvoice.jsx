@@ -118,21 +118,21 @@ const EditInvoice = () => {
       updateInvoiceForm.client,
     );
     if (requiredFieldsOwner.length) {
-      setIsUpdating(false);
       if (
         ["name", "address"].some((field) => requiredFieldsOwner.includes(field))
       ) {
+        setIsUpdating(false);
         setErrorMessage("Owner name and address are required.");
         return;
       }
     }
     if (requiredFieldsClient.length) {
-      setIsUpdating(false);
       if (
         ["name", "address"].some((field) =>
           requiredFieldsClient.includes(field),
         )
       ) {
+        setIsUpdating(false);
         setErrorMessage("Client name and address are required.");
         return;
       }
