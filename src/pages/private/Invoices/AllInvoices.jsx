@@ -18,8 +18,9 @@ import {
   TableHead,
   TableHeadCell,
   TableRow,
+  Badge,
 } from "flowbite-react";
-import { Check, Eye, Ellipsis } from "lucide-react";
+import { Check, Eye, Ellipsis, ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
 import delay from "../../../utils/delay";
 import useDebounce from "../../../hooks/useDebounce";
@@ -50,6 +51,13 @@ const ALlInvoices = () => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  const badgeColor = {
+    unpaid: "failure",
+    pending: "indigo",
+    paid: "success",
+    overdue: "warning",
+  };
 
   useEffect(() => {
     getData();
@@ -296,36 +304,106 @@ const ALlInvoices = () => {
                 </TableRow>
               </TableHead>
               <TableBody className="divide-y">
-                <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                  <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                    Alex Doe
-                  </TableCell>
-                  <TableCell>#INV-001</TableCell>
-                  <TableCell>$ 1200</TableCell>
-                  <TableCell className="capitalize">pending</TableCell>
-                  <TableCell>21/12/2026</TableCell>
-                  <TableCell>
-                    <Dropdown
-                      inline
-                      arrowIcon={false}
-                      label={<Ellipsis className="cursor-pointer" size={20} />}
-                      className=" dark:text-white"
-                      placement="right-start"
+                {invoices.map((invoice) => {
+                  return (
+                    <TableRow
+                      key={invoice._id}
+                      className="bg-white dark:border-gray-700 dark:bg-gray-800"
                     >
-                      <DropdownItem>Show</DropdownItem>
-                      <DropdownItem>Edit</DropdownItem>
-                      <DropdownDivider />
-                      <DropdownItem>Delete</DropdownItem>
-                    </Dropdown>
-                  </TableCell>
-                </TableRow>
+                      <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                        {invoice.client.name}
+                      </TableCell>
+                      <TableCell>#{invoice.invoiceNumber}</TableCell>
+                      <TableCell>$ {invoice.total}</TableCell>
+                      <TableCell className="capitalize">
+                        <Dropdown
+                          inline
+                          arrowIcon={false}
+                          placement="right-start"
+                          label={
+                            <>
+                              <Badge
+                                color={badgeColor[invoice.status]}
+                                className="cursor-pointer capitalize"
+                              >
+                                {invoice.status}
+                                <ChevronDown
+                                  className="ml-1 inline"
+                                  size={14}
+                                />
+                              </Badge>
+                            </>
+                          }
+                        >
+                          <DropdownItem
+                            onClick={() =>
+                              handleUpdateModal(invoice, "pending")
+                            }
+                          >
+                            Pending
+                          </DropdownItem>
+                          <DropdownItem
+                            onClick={() => handleUpdateModal(invoice, "unpaid")}
+                          >
+                            Unpaid
+                          </DropdownItem>
+                          <DropdownItem
+                            onClick={() =>
+                              handleUpdateModal(invoice, "overdue")
+                            }
+                          >
+                            Overdue
+                          </DropdownItem>
+                          <DropdownItem
+                            onClick={() => handleUpdateModal(invoice, "paid")}
+                          >
+                            Paid
+                          </DropdownItem>
+                        </Dropdown>
+                      </TableCell>
+                      <TableCell>
+                        {new Date(invoice.issuedDate).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        <Dropdown
+                          inline
+                          arrowIcon={false}
+                          label={
+                            <Ellipsis className="cursor-pointer" size={20} />
+                          }
+                          className=" dark:text-white"
+                          placement="right-start"
+                        >
+                          <DropdownItem
+                            as={Link}
+                            to={`/invoices/details/${invoice._id}`}
+                          >
+                            Show
+                          </DropdownItem>
+                          <DropdownItem
+                            as={Link}
+                            to={`/invoices/edit/${invoice._id}`}
+                          >
+                            Edit
+                          </DropdownItem>
+                          <DropdownDivider />
+                          <DropdownItem
+                            onClick={() => handleDeleteModal(invoice)}
+                          >
+                            Delete
+                          </DropdownItem>
+                        </Dropdown>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </Card>
         </div>
       </section>
 
-      {invoices.map((invoice) => {
+      {/* {invoices.map((invoice) => {
         return (
           <div key={invoice._id}>
             <div className="flex gap-x-2 items-center">
@@ -368,7 +446,7 @@ const ALlInvoices = () => {
             </div>
           </div>
         );
-      })}
+      })} */}
       <ConfirmationModal
         show={openDeleteModal}
         status={"delete"}
