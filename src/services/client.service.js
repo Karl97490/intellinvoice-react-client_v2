@@ -14,6 +14,10 @@ class ClientService extends Service {
     return this.service.get(this.urlPrefixe + `/${id}`);
   };
 
+  getClientStats = () => {
+    return this.service.get(this.urlPrefixe + "/stats");
+  };
+
   createClient = (requestBody) => {
     return this.service.post(this.urlPrefixe + "/", requestBody);
   };

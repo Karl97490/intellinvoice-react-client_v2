@@ -1,4 +1,4 @@
-import { use, useEffect, useState } from "react";
+import { use, useContext, useEffect, useState } from "react";
 import invoiceService from "../../../services/invoice.service";
 import {
   Spinner,
@@ -17,9 +17,11 @@ import delay from "../../../utils/delay";
 import useDebounce from "../../../hooks/useDebounce";
 import ConfirmationModal from "../../../components/ui/ConfirmationModal";
 import NotificationToast from "../../../components/ui/NotificationToast";
+import { InvoiceStatsContext } from "../../../contexts/invoiceStats.context";
 
 const ALlInvoices = () => {
   const [invoices, setInvoices] = useState(null);
+  const invoiceStats = useContext(InvoiceStatsContext);
 
   const [searchQuery, setSearchQuery] = useState("");
   const searchQueryDebounced = useDebounce(searchQuery);
@@ -49,7 +51,7 @@ const ALlInvoices = () => {
       // console.log(searchQuery);
       // console.log(issuedDateQuery);
       // console.log(dueDateQuery);
-      console.log(statusQuery);
+      // console.log(statusQuery);
       const response = await invoiceService.getAllInvoices({
         search: searchQueryDebounced,
         issuedDate: issuedDateQuery
@@ -169,7 +171,10 @@ const ALlInvoices = () => {
         />
       )}
       <h1>AllInvoices component</h1>
-      <span>{invoices.length || "0"} invoices</span>
+      <div className="flex gap-x-2">
+        <span>Total invoices : {invoiceStats.totalInvoices}</span>
+        <span>Total amount : ${invoiceStats.totalAmount}</span>
+      </div>
       <div className="flex items-center gap-x-2 my-4">
         <div>
           <div className="mb-2 block">

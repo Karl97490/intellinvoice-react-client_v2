@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import clientService from "../../../services/client.service";
 import { useNavigate } from "react-router-dom";
 import {
@@ -17,21 +17,27 @@ import validateRequiredFields from "../../../utils/validateRequiredFields";
 import { Check } from "lucide-react";
 import delay from "../../../utils/delay";
 import useDebounce from "../../../hooks/useDebounce";
+import { ClientStatsContext } from "../../../contexts/clientStats.context";
 
 const AllClients = () => {
   const [clients, setClients] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [successToast, setSuccessToast] = useState(false);
-  const [openUpdateModal, setOpenUpdateModal] = useState(false);
+  const clientStats = useContext(ClientStatsContext);
+
   const [updateClientForm, setUpdateClientForm] = useState({
     name: "",
     email: "",
     address: "",
     phone: "",
   });
+  const [isLoading, setIsLoading] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const [successToast, setSuccessToast] = useState(false);
+  const [openUpdateModal, setOpenUpdateModal] = useState(false);
+
   const [searchQuery, setSearchQuery] = useState("");
   const searchQueryDebounced = useDebounce(searchQuery);
+
   const [errorMessage, setErrorMessage] = useState(null);
   const navigate = useNavigate();
 
@@ -147,7 +153,7 @@ const AllClients = () => {
         </Toast>
       )}
       <h1>AllClients component...</h1>
-      <span>{clients.length || "0"} clients</span>
+      <span>Total clients : {clientStats.totalClients}</span>
       <TextInput
         className="w-100"
         placeholder="search"

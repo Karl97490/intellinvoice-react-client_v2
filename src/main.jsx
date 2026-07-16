@@ -4,13 +4,16 @@ import router from "./routes/router.jsx";
 import { RouterProvider } from "react-router-dom";
 import { AuthProviderWrapper } from "./contexts/auth.context.jsx";
 import { InvoiceStatsProviderWrapper } from "./contexts/invoiceStats.context.jsx";
+import { ClientStatsProviderWrapper } from "./contexts/clientStats.context.jsx";
 import "./index.css";
 import App from "./App.jsx";
 
 createRoot(document.getElementById("root")).render(
   <AuthProviderWrapper>
     <InvoiceStatsProviderWrapper>
-      <RouterProvider router={router} />
+      <ClientStatsProviderWrapper>
+        <RouterProvider router={router} />
+      </ClientStatsProviderWrapper>
     </InvoiceStatsProviderWrapper>
   </AuthProviderWrapper>,
   // <StrictMode>
