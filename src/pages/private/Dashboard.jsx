@@ -28,7 +28,7 @@ const Dashboard = () => {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || !invoiceStats) {
     return (
       <>
         <div className="mx-auto flex flex-col gap-2 items-center">

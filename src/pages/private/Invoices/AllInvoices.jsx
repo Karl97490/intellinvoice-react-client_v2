@@ -143,7 +143,7 @@ const ALlInvoices = () => {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || !invoiceStats) {
     return (
       <div className="flex flex-col gap-2 items-center mx-auto">
         <Spinner aria-label="Loading spinner" size="xl" />

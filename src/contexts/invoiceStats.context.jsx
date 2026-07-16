@@ -1,27 +1,33 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import invoiceService from "../services/invoice.service";
 import { Spinner } from "flowbite-react";
+import { AuthContext } from "./auth.context";
 
 const InvoiceStatsContext = createContext();
 
 const InvoiceStatsProviderWrapper = (props) => {
   const [invoiceStats, setInvoiceStats] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
+    if (!user) {
+      setIsLoading(false);
+      return;
+    }
     getData();
-  }, []);
+  }, [user]);
 
   const getData = async () => {
     try {
       const response = await invoiceService.getInvoiceStats();
       console.log(response.data);
-      setIsLoading(false);
       setInvoiceStats(response.data);
+      setIsLoading(false);
     } catch (error) {
       console.log(error.response);
-      setIsLoading(false);
       setInvoiceStats(null);
+      setIsLoading(false);
       throw error;
     }
   };
@@ -30,15 +36,6 @@ const InvoiceStatsProviderWrapper = (props) => {
     invoiceStats,
     getData,
   };
-
-  if (isLoading) {
-    return (
-      <div className="flex flex-col gap-2 items-center mx-auto">
-        <Spinner aria-label="Loading spinner" size="xl" />
-        <span className="text-md">Loading...</span>
-      </div>
-    );
-  }
 
   return (
     <InvoiceStatsContext.Provider value={statsContext}>

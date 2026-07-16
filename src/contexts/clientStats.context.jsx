@@ -1,27 +1,33 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import clientService from "../services/client.service";
 import { Spinner } from "flowbite-react";
+import { AuthContext } from "./auth.context";
 
 const ClientStatsContext = createContext();
 
 const ClientStatsProviderWrapper = (props) => {
   const [clientStats, setClientStats] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
+    if (!user) {
+      setIsLoading(false);
+      return;
+    }
     getData();
-  }, []);
+  }, [user]);
 
   const getData = async () => {
     try {
       const response = await clientService.getClientStats();
       console.log(response.data);
-      setIsLoading(false);
       setClientStats(response.data);
+      setIsLoading(false);
     } catch (error) {
       console.log(error.response);
-      setIsLoading(false);
       setClientStats(null);
+      setIsLoading(false);
       throw error;
     }
   };
