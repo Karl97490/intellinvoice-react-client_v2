@@ -11,13 +11,14 @@ import {
   Label,
   TextInput,
   Textarea,
-  Toast,
 } from "flowbite-react";
 import validateRequiredFields from "../../../utils/validateRequiredFields";
 import { Check } from "lucide-react";
 import delay from "../../../utils/delay";
 import useDebounce from "../../../hooks/useDebounce";
 import { ClientStatsContext } from "../../../contexts/clientStats.context";
+import NotificationToast from "../../../components/ui/NotificationToast";
+import ConfirmationModal from "../../../components/ui/ConfirmationModal";
 
 const AllClients = () => {
   const [clients, setClients] = useState(null);
@@ -32,9 +33,15 @@ const AllClients = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const [successToast, setSuccessToast] = useState(false);
+  const [successUpdateToast, setSuccessUpdateToast] = useState(false);
+  const [successDeleteToast, setSuccessDeleteToast] = useState(false);
+  const [errorToast, setErrorToast] = useState(false);
+
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [selectedClient, setSelectedClient] = useState(null);
 
   const [searchQuery, setSearchQuery] = useState("");
   const searchQueryDebounced = useDebounce(searchQuery);
@@ -68,19 +75,36 @@ const AllClients = () => {
     }));
   };
 
-  const handleOpenUpdateModalForm = async (id) => {
+  const getClientData = async (clientId) => {
     setIsLoading(true);
     try {
-      const response = await clientService.getClient(id);
+      const response = await clientService.getClient(clientId);
+      console.log(response);
       setUpdateClientForm(response.data);
-      setOpenUpdateModal(true);
       setIsLoading(false); // Update Loading method later - just disabling btn for e.g
     } catch (error) {
+      // console.log(error.response);
       setIsLoading(false);
+      setErrorToast(true);
+      await delay(2000);
+      setErrorToast(false);
+      throw error;
     }
   };
 
-  const handleUpdateClient = async (e, id) => {
+  const handleUpdateModal = async (client) => {
+    console.log("selected client..." + client._id);
+    setSelectedClient(client);
+    try {
+      await getClientData(client._id);
+      setOpenUpdateModal(true);
+    } catch (error) {
+      setOpenUpdateModal(false);
+      setSelectedClient(null);
+    }
+  };
+
+  const handleUpdateClient = async (e) => {
     e.preventDefault();
     setIsUpdating(true);
 
@@ -89,6 +113,7 @@ const AllClients = () => {
       setIsUpdating(false);
       if (["name", "address"].some((field) => requiredFields.includes(field))) {
         setErrorMessage("Name and address are required.");
+        return;
       }
     }
 
@@ -96,14 +121,18 @@ const AllClients = () => {
       ...updateClientForm,
     };
     try {
-      const response = await clientService.updateClient(id, body);
-      setIsUpdating(false);
-      setSuccessToast(true); // toggle success toast
-      setOpenUpdateModal(false); // close the modal after editing
-      await delay(1000);
-      setSuccessToast(false); // toggle success toast
+      const response = await clientService.updateClient(
+        selectedClient._id,
+        body,
+      );
       getData(); // refresh the page with new data
+      setIsUpdating(false);
+      setOpenUpdateModal(false); // close the modal after editing
+      setSuccessUpdateToast(true); // toggle success toast
+      await delay(2000);
+      setSuccessUpdateToast(false); // toggle success toast
     } catch (error) {
+      console.log(error.response);
       setIsUpdating(false);
       if (error.response && error.response.status === 400) {
         setErrorMessage(error.response.data.message);
@@ -114,14 +143,27 @@ const AllClients = () => {
     }
   };
 
-  const handleDeleteClient = async (id) => {
-    setIsLoading(true);
+  const handleDeleteModal = (client) => {
+    console.log("triggering delete modal");
+    setSelectedClient(client);
+    setOpenDeleteModal(true);
+  };
+
+  const handleDeleteClient = async () => {
+    setIsDeleting(true);
     try {
-      const response = await clientService.deleteClient(id);
-      setIsLoading(false); // Update Loading method later - just disabling btn for e.g
+      await Promise.reject();
+      const response = await clientService.deleteClient(selectedClient._id);
+      setIsDeleting(false);
       getData();
       getClientStats();
+      setOpenDeleteModal(false);
+      setSelectedClient(null);
+      setSuccessDeleteToast(true);
+      await delay(2000);
+      setSuccessDeleteToast(false);
     } catch (error) {
+      console.log(error.response);
       setIsLoading(false);
       // error message or toast
     }
@@ -140,15 +182,23 @@ const AllClients = () => {
 
   return (
     <>
-      {successToast && (
-        <Toast className="border border-gray-100">
-          <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
-            <Check size={14} />
-          </div>
-          <div className="ml-3 text-sm font-normal">
-            Editing client successfully.
-          </div>
-        </Toast>
+      {successUpdateToast && (
+        <NotificationToast
+          status="success"
+          message="Update client successfully"
+        />
+      )}
+      {successDeleteToast && (
+        <NotificationToast
+          status="success"
+          message="Delete client successfully"
+        />
+      )}
+      {errorToast && (
+        <NotificationToast
+          status="error"
+          message="Something went wrong. Please try again"
+        />
       )}
       <h1>AllClients component...</h1>
       <span>Total clients : {clientStats.totalClients}</span>
@@ -167,122 +217,123 @@ const AllClients = () => {
             <Button
               color="red"
               className="cursor-pointer"
-              onClick={() => handleDeleteClient(client._id)}
+              onClick={() => handleDeleteModal(client)}
             >
               Delete
             </Button>
             <Button
               color="blue"
               className="cursor-pointer"
-              onClick={() => handleOpenUpdateModalForm(client._id)}
+              onClick={() => handleUpdateModal(client)}
             >
               Edit
             </Button>
-            <Modal
-              show={openUpdateModal}
-              onClose={() => setOpenUpdateModal(false)}
-            >
-              <ModalHeader>Update form modal Client</ModalHeader>
-              <form
-                className=""
-                onSubmit={(e) => handleUpdateClient(e, client._id)}
-              >
-                <ModalBody>
-                  <div>
-                    <div className="mb-2 block">
-                      <Label htmlFor="name">Name</Label>
-                    </div>
-                    <TextInput
-                      id="name"
-                      type="text"
-                      name="name"
-                      value={updateClientForm.name}
-                      onChange={handleChange}
-                      placeholder="John Doe"
-                    />
-                  </div>
-                  <div>
-                    <div className="mb-2 block">
-                      <Label htmlFor="email">Email</Label>
-                    </div>
-                    <TextInput
-                      id="email"
-                      type="email"
-                      name="email"
-                      value={updateClientForm.email}
-                      onChange={handleChange}
-                      placeholder="john.doe@mail.com"
-                    />
-                  </div>
-                  <div>
-                    <div className="mb-2 block">
-                      <Label htmlFor="address">Address</Label>
-                    </div>
-                    <Textarea
-                      id="address"
-                      name="address"
-                      value={updateClientForm.address}
-                      onChange={handleChange}
-                      placeholder="Type your address..."
-                      rows={4}
-                    />
-                  </div>
-                  <div>
-                    <div className="mb-2 block">
-                      <Label htmlFor="phone">Phone</Label>
-                    </div>
-                    <TextInput
-                      id="phone"
-                      name="phone"
-                      type="text"
-                      value={updateClientForm.phone}
-                      onChange={handleChange}
-                      placeholder="262-895-635"
-                    />
-                  </div>
-                  <div className="flex justify-center">
-                    {errorMessage && (
-                      <p className="text-red-400 first-letter:uppercase">
-                        {errorMessage}
-                      </p>
-                    )}
-                  </div>
-                </ModalBody>
-                <ModalFooter>
-                  <div className="w-full flex gap-x-2 justify-end">
-                    <Button
-                      className="cursor-pointer"
-                      color="gray"
-                      onClick={() => setOpenUpdateModal(false)}
-                      disabled={isUpdating}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      type="submit"
-                      className="cursor-pointer"
-                      color="blue"
-                      disabled={isUpdating}
-                    >
-                      {isUpdating ? (
-                        <>
-                          <Spinner
-                            aria-label="Updating loading spinner"
-                            size="sm"
-                          />
-                          <span className="pl-3">Editing...</span>
-                        </>
-                      ) : (
-                        <>Edit client</>
-                      )}
-                    </Button>
-                  </div>
-                </ModalFooter>
-              </form>
-            </Modal>
           </div>
         );
       })}
+      <Modal show={openUpdateModal} onClose={() => setOpenUpdateModal(false)}>
+        <ModalHeader>Update form modal Client</ModalHeader>
+        <form className="" onSubmit={(e) => handleUpdateClient(e)}>
+          <ModalBody>
+            <div>
+              <div className="mb-2 block">
+                <Label htmlFor="name">Name</Label>
+              </div>
+              <TextInput
+                id="name"
+                type="text"
+                name="name"
+                value={updateClientForm.name}
+                onChange={handleChange}
+                placeholder="John Doe"
+              />
+            </div>
+            <div>
+              <div className="mb-2 block">
+                <Label htmlFor="email">Email</Label>
+              </div>
+              <TextInput
+                id="email"
+                type="email"
+                name="email"
+                value={updateClientForm.email}
+                onChange={handleChange}
+                placeholder="john.doe@mail.com"
+              />
+            </div>
+            <div>
+              <div className="mb-2 block">
+                <Label htmlFor="address">Address</Label>
+              </div>
+              <Textarea
+                id="address"
+                name="address"
+                value={updateClientForm.address}
+                onChange={handleChange}
+                placeholder="Type your address..."
+                rows={4}
+              />
+            </div>
+            <div>
+              <div className="mb-2 block">
+                <Label htmlFor="phone">Phone</Label>
+              </div>
+              <TextInput
+                id="phone"
+                name="phone"
+                type="text"
+                value={updateClientForm.phone}
+                onChange={handleChange}
+                placeholder="262-895-635"
+              />
+            </div>
+            <div className="flex justify-center">
+              {errorMessage && (
+                <p className="text-red-400 first-letter:uppercase">
+                  {errorMessage}
+                </p>
+              )}
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <div className="w-full flex gap-x-2 justify-end">
+              <Button
+                className="cursor-pointer"
+                color="gray"
+                onClick={() => setOpenUpdateModal(false)}
+                disabled={isUpdating}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                className="cursor-pointer"
+                color="blue"
+                disabled={isUpdating}
+              >
+                {isUpdating ? (
+                  <>
+                    <Spinner aria-label="Updating loading spinner" size="sm" />
+                    <span className="pl-3">Editing...</span>
+                  </>
+                ) : (
+                  <>Edit client</>
+                )}
+              </Button>
+            </div>
+          </ModalFooter>
+        </form>
+      </Modal>
+      <ConfirmationModal
+        show={openDeleteModal}
+        status={"delete"}
+        title={"Delete client"}
+        message={"Do you wish to delete this client ?"}
+        confirmText={"Delete"}
+        isLoading={isDeleting}
+        onClose={() => setOpenDeleteModal(false)}
+        onConfirm={handleDeleteClient}
+      />
     </>
   );
 };

@@ -36,6 +36,7 @@ const ConfirmationModal = ({
           className="cursor-pointer"
           color="alternative"
           onClick={onClose}
+          disabled={isLoading}
         >
           Cancel
         </Button>
