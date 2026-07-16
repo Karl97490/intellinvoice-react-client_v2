@@ -7,6 +7,7 @@ import CreateInvoice from "../pages/private/Invoices/CreateInvoice.jsx";
 import InvoiceDetails from "../pages/private/Invoices/InvoiceDetails.jsx";
 import EditInvoice from "../pages/private/Invoices/EditInvoice.jsx";
 import ALlInvoices from "../pages/private/Invoices/AllInvoices.jsx";
+import Profile from "../pages/private/User/Profile.jsx";
 
 const privateRoutes = [
   {
@@ -42,6 +43,10 @@ const privateRoutes = [
           {
             path: "/clients/new",
             element: <CreateClient />,
+          },
+          {
+            path: "/profile",
+            element: <Profile />,
           },
         ],
       },
