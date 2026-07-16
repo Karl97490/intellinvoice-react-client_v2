@@ -37,15 +37,6 @@ const ClientStatsProviderWrapper = (props) => {
     getData,
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex flex-col gap-2 items-center mx-auto">
-        <Spinner aria-label="Loading spinner" size="xl" />
-        <span className="text-md">Loading...</span>
-      </div>
-    );
-  }
-
   return (
     <ClientStatsContext.Provider value={statsContext}>
       {props.children}

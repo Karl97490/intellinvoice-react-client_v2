@@ -131,7 +131,7 @@ const AllClients = () => {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || !clientStats) {
     return (
       <>
         <div className="mx-auto flex flex-col gap-2 items-center">
