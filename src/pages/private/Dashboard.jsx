@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import invoiceService from "../../services/invoice.service";
-import { Spinner } from "flowbite-react";
+import { Button, Spinner } from "flowbite-react";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   const [invoices, setInvoices] = useState(null);
@@ -32,7 +33,34 @@ const Dashboard = () => {
       </>
     );
   }
-  return <h1>Dashboard component</h1>;
+  return (
+    <>
+      <h1>Dashboard component</h1>
+      <h2>Recent Invoices</h2>
+      {invoices.map((invoice) => {
+        return (
+          <div key={invoice._id}>
+            <div className="flex gap-x-2 items-center">
+              <span>{invoice.client.name}</span>
+              <span>{invoice.invoiceNumber}</span>
+              <span>${invoice.total.toFixed(1)}</span>
+              <span>{invoice.status}</span>
+              <span>{new Date(invoice.issuedDate).toDateString()}</span>
+              <span>{new Date(invoice.dueDate).toDateString()}</span>
+              <Button
+                color="alternative"
+                className="cursor-pointer"
+                as={Link}
+                to={`/invoices/details/${invoice._id}`}
+              >
+                Show
+              </Button>
+            </div>
+          </div>
+        );
+      })}
+    </>
+  );
 };
 
 export default Dashboard;
