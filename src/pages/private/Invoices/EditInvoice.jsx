@@ -42,7 +42,6 @@ const EditInvoice = () => {
   const getData = async () => {
     try {
       const response = await invoiceService.getInvoice(invoiceId);
-      console.log(response);
       setIsLoading(false);
       setUpdateInvoiceForm({
         ...response.data,
@@ -50,14 +49,12 @@ const EditInvoice = () => {
         dueDate: new Date(response.data.dueDate),
       });
     } catch (error) {
-      console.log(error.response);
       // navigate("/error-page") // Redirect to error page
     }
   };
 
   const handleChange = (e, itemIndex, date, dateField) => {
     if (date && dateField) {
-      console.log(date);
       setUpdateInvoiceForm((prev) => ({
         ...prev,
         [dateField]: date,
@@ -114,7 +111,6 @@ const EditInvoice = () => {
 
   const handleUpdateInvoice = async (e) => {
     e.preventDefault();
-    console.log("Updating invoice...");
     setIsUpdating(true);
 
     const requiredFieldsOwner = validateRequiredFields(updateInvoiceForm.owner);
@@ -148,7 +144,6 @@ const EditInvoice = () => {
       return;
     }
 
-    console.log(updateInvoiceForm);
     const body = {
       ...updateInvoiceForm,
       issuedDate: new Date(updateInvoiceForm.issuedDate.setHours(0, 0, 0, 0)),
@@ -156,14 +151,12 @@ const EditInvoice = () => {
     };
     try {
       const response = await invoiceService.updateInvoice(invoiceId, body);
-      console.log(response);
       setIsUpdating(false);
       setSuccessToast(true);
       setIsRedirecting(true);
       await delay(2000);
       navigate(`/invoices/details/${response.data._id}`);
     } catch (error) {
-      console.log(error.response);
       setIsUpdating(false);
       if (error.response && error.response.status === 400) {
         setErrorMessage(error.response.data.message);
@@ -175,7 +168,6 @@ const EditInvoice = () => {
   };
 
   const handleAddItem = () => {
-    console.log("adding new item...");
     setUpdateInvoiceForm((prev) => ({
       ...prev,
       items: [

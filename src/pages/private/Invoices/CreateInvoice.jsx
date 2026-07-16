@@ -129,7 +129,6 @@ const CreateInvoice = () => {
 
   const handleCreateInvoice = async (e) => {
     e.preventDefault();
-    console.log("Creating new invoice...");
     setIsCreating(true);
 
     const requiredFieldsOwner = validateRequiredFields(createInvoiceForm.owner);
@@ -168,17 +167,15 @@ const CreateInvoice = () => {
       issuedDate: new Date(createInvoiceForm.issuedDate.setHours(0, 0, 0, 0)),
       dueDate: new Date(createInvoiceForm.dueDate.setHours(0, 0, 0, 0)),
     };
-    console.log(body);
+
     try {
       const response = await invoiceService.createInvoice(body);
-      console.log(response);
       setIsCreating(false);
       setSuccessToast(true);
       setIsRedirecting(true);
       await delay(2000);
       navigate(`/invoices/details/${response.data._id}`);
     } catch (error) {
-      console.log(error.response);
       setIsCreating(false);
       if (error.response && error.response.status === 400) {
         setErrorMessage(error.response.data.message);
@@ -190,7 +187,6 @@ const CreateInvoice = () => {
   };
 
   const handleAddItem = () => {
-    console.log("adding new item...");
     setCreateInvoiceForm((prev) => ({
       ...prev,
       items: [

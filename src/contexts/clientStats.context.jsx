@@ -21,11 +21,9 @@ const ClientStatsProviderWrapper = (props) => {
   const getData = async () => {
     try {
       const response = await clientService.getClientStats();
-      console.log(response.data);
       setClientStats(response.data);
       setIsLoading(false);
     } catch (error) {
-      console.log(error.response);
       setClientStats(null);
       setIsLoading(false);
       throw error;

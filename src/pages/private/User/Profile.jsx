@@ -46,7 +46,6 @@ const Profile = () => {
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
-    console.log("updating profile user with id: " + user._id);
     setIsUpdating(true);
 
     const requiredFields = validateRequiredFields(userForm);
@@ -65,10 +64,8 @@ const Profile = () => {
     const body = {
       ...userForm,
     };
-    console.log(body);
     try {
       const response = await userService.updateUser(user._id, body);
-      console.log(response);
       await delay(2000);
       setIsUpdating(false);
       await authenticateUser();
@@ -76,7 +73,6 @@ const Profile = () => {
       await delay(2000);
       setSuccessToast(false);
     } catch (error) {
-      console.log(error.response);
       setIsUpdating(false);
       if (error.response && error.response.status === 400) {
         setErrorMessage(error.response.data.message);

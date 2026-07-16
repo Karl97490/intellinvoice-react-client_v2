@@ -19,11 +19,9 @@ const Dashboard = () => {
         limit: 5,
         sort: { createdAt: -1 },
       });
-      console.log(response);
       setIsLoading(false);
       setInvoices(response.data);
     } catch (error) {
-      console.log(error.response);
       // navigate("error-page"); // Redirect to error page
     }
   };

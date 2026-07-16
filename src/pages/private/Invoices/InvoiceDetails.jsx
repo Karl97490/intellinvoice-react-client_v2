@@ -15,7 +15,6 @@ const InvoiceDetails = () => {
   const getData = async () => {
     try {
       const response = await invoiceService.getInvoice(invoiceId);
-      console.log(response);
       setIsLoading(false);
       setInvoice({
         ...response.data,
@@ -23,7 +22,6 @@ const InvoiceDetails = () => {
         dueDate: new Date(response.data.dueDate),
       });
     } catch (error) {
-      console.log(error.response);
       // navigate("/error-page") // Redirect to error page
     }
   };

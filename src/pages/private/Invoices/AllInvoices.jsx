@@ -49,10 +49,6 @@ const ALlInvoices = () => {
 
   const getData = async () => {
     try {
-      // console.log(searchQuery);
-      // console.log(issuedDateQuery);
-      // console.log(dueDateQuery);
-      // console.log(statusQuery);
       const response = await invoiceService.getAllInvoices({
         search: searchQueryDebounced,
         issuedDate: issuedDateQuery
@@ -63,11 +59,9 @@ const ALlInvoices = () => {
           : undefined,
         status: statusQuery,
       });
-      console.log(response);
       setIsLoading(false);
       setInvoices(response.data);
     } catch (error) {
-      console.log(error.response);
       // navigate("error-page") // Redirecto to error page
     }
   };
@@ -89,13 +83,11 @@ const ALlInvoices = () => {
     setIsUpdating(true);
 
     const body = { status: pendingStatus };
-    console.log(body);
     try {
       const response = await invoiceService.updateStatusInvoice(
         selectedInvoice._id,
         body,
       );
-      console.log(response);
       await delay(2000);
       setIsUpdating(false);
       getData();
@@ -106,7 +98,6 @@ const ALlInvoices = () => {
       await delay(2000);
       setSuccessUpdateToast(false);
     } catch (error) {
-      // console.log(error);
       setIsUpdating(false);
       setErrorToast(true);
       await delay(2000);
@@ -115,7 +106,6 @@ const ALlInvoices = () => {
   };
 
   const handleDeleteModal = (invoice) => {
-    console.log("invoice with id: " + invoice._id);
     setSelectedInvoice(invoice);
     setOpenDeleteModal(true);
   };
@@ -124,7 +114,6 @@ const ALlInvoices = () => {
     setIsDeleting(true);
     try {
       const response = await invoiceService.deleteInvoice(selectedInvoice._id);
-      console.log(response);
       await delay(2000);
       setIsDeleting(false);
       getData();
@@ -135,7 +124,6 @@ const ALlInvoices = () => {
       await delay(2000);
       setSuccessDeleteToast(false);
     } catch (error) {
-      // console.log(error.response);
       setIsDeleting(false);
       setErrorToast(true);
       await delay(2000);

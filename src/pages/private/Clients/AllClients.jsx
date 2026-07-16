@@ -52,7 +52,6 @@ const AllClients = () => {
       setIsLoading(false);
       setClients(response.data);
     } catch (error) {
-      console.log(error.response);
       // navigate("/error-page"); // Redirect to error-page
     }
   };
@@ -77,7 +76,6 @@ const AllClients = () => {
       setOpenUpdateModal(true);
       setIsLoading(false); // Update Loading method later - just disabling btn for e.g
     } catch (error) {
-      console.log(error.response);
       setIsLoading(false);
     }
   };
@@ -106,7 +104,6 @@ const AllClients = () => {
       setSuccessToast(false); // toggle success toast
       getData(); // refresh the page with new data
     } catch (error) {
-      console.log(error.response);
       setIsUpdating(false);
       if (error.response && error.response.status === 400) {
         setErrorMessage(error.response.data.message);
@@ -125,7 +122,6 @@ const AllClients = () => {
       getData();
       getClientStats();
     } catch (error) {
-      console.log(error.response);
       setIsLoading(false);
       // error message or toast
     }

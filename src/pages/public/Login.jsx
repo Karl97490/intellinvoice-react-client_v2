@@ -21,7 +21,6 @@ const Login = () => {
 
   const handleSignIn = async (e) => {
     e.preventDefault();
-    console.log("signin process...");
     setIsLogging(true);
 
     const requiredFields = validateRequiredFields(signinForm);
@@ -34,13 +33,11 @@ const Login = () => {
     const body = {
       ...signinForm,
     };
-    console.log(body);
     try {
       const response = await authService.login(body);
       storeToken(response.data.authToken); // store token in the local storage
       await authenticateUser(); // verify token validity with server
     } catch (error) {
-      console.log(error.response);
       setIsLogging(false);
       if (error.response && error.response.status === 400) {
         setErrorMessage(error.response.data.message);

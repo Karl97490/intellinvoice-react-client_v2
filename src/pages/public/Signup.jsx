@@ -28,7 +28,6 @@ const Signup = () => {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    console.log("signup...");
     setIsSignuping(true);
 
     const requiredFields = validateRequiredFields(signupForm);
@@ -51,9 +50,7 @@ const Signup = () => {
     };
     try {
       const response = await authService.signup(body);
-      console.log(body);
       setIsSignuping(false);
-      console.log(response);
       // Pop up Toast Success signup
       setSuccessToast(true);
       // Redirecting loading state true
@@ -63,7 +60,6 @@ const Signup = () => {
       // Redirecting to loging page
       navigate("/login");
     } catch (error) {
-      console.log(error.response);
       setIsSignuping(false);
       if (error.response && error.response.status === 400) {
         setErrorMessage(error.response.data.message);

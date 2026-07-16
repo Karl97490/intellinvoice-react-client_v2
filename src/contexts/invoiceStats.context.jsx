@@ -21,11 +21,9 @@ const InvoiceStatsProviderWrapper = (props) => {
   const getData = async () => {
     try {
       const response = await invoiceService.getInvoiceStats();
-      console.log(response.data);
       setInvoiceStats(response.data);
       setIsLoading(false);
     } catch (error) {
-      console.log(error.response);
       setInvoiceStats(null);
       setIsLoading(false);
       throw error;

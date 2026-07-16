@@ -37,7 +37,6 @@ const CreateClient = () => {
 
   const handleCreateClient = async (e) => {
     e.preventDefault();
-    console.log("creating client...");
     setIsCreating(true);
 
     const requiredFields = validateRequiredFields(clientForm);
@@ -52,7 +51,6 @@ const CreateClient = () => {
     const body = {
       ...clientForm,
     };
-    console.log(body);
 
     try {
       await clientService.createClient(body);
@@ -62,7 +60,6 @@ const CreateClient = () => {
       await delay(2000);
       navigate("/clients");
     } catch (error) {
-      console.log(error.response);
       setIsCreating(false);
       if (error.response && error.response.status === 400) {
         setErrorMessage(error.response.data.message);
