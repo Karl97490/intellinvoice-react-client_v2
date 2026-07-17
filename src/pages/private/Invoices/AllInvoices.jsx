@@ -163,24 +163,26 @@ const ALlInvoices = () => {
   }
   return (
     <>
-      {successUpdateToast && (
-        <NotificationToast
-          status="success"
-          message="Update status successfully"
-        />
-      )}
-      {successDeleteToast && (
-        <NotificationToast
-          status="success"
-          message="Delete invoice successfully"
-        />
-      )}
-      {errorToast && (
-        <NotificationToast
-          status="error"
-          message="Something went wrong. Please try again"
-        />
-      )}
+      <div className="flex min-h-screen w-full items-center justify-center">
+        {successUpdateToast && (
+          <NotificationToast
+            status="success"
+            message="Update status successfully"
+          />
+        )}
+        {successDeleteToast && (
+          <NotificationToast
+            status="success"
+            message="Delete invoice successfully"
+          />
+        )}
+        {errorToast && (
+          <NotificationToast
+            status="error"
+            message="Something went wrong. Please try again"
+          />
+        )}
+      </div>
       <section>
         <Card className="mb-4">
           <div className="flex flex-col gap-y-1">

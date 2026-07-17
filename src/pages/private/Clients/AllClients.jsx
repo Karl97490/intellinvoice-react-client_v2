@@ -133,6 +133,7 @@ const AllClients = () => {
       setIsCreating(false);
       setOpenCreateModal(false);
       setErrorMessage(null);
+      setCreateClientForm({ name: "", email: "", address: "", phone: "" });
       setSuccessCreateToast(true);
       await delay(2000);
       setSuccessCreateToast(false);
@@ -241,30 +242,32 @@ const AllClients = () => {
 
   return (
     <>
-      {successCreateToast && (
-        <NotificationToast
-          status="success"
-          message="Create new client successfully"
-        />
-      )}
-      {successUpdateToast && (
-        <NotificationToast
-          status="success"
-          message="Update client successfully"
-        />
-      )}
-      {successDeleteToast && (
-        <NotificationToast
-          status="success"
-          message="Delete client successfully"
-        />
-      )}
-      {errorToast && (
-        <NotificationToast
-          status="error"
-          message="Something went wrong. Please try again"
-        />
-      )}
+      <div className="flex min-h-screen w-full items-center justify-center">
+        {successCreateToast && (
+          <NotificationToast
+            status="success"
+            message="Create new client successfully"
+          />
+        )}
+        {successUpdateToast && (
+          <NotificationToast
+            status="success"
+            message="Update client successfully"
+          />
+        )}
+        {successDeleteToast && (
+          <NotificationToast
+            status="success"
+            message="Delete client successfully"
+          />
+        )}
+        {errorToast && (
+          <NotificationToast
+            status="error"
+            message="Something went wrong. Please try again"
+          />
+        )}
+      </div>
       <section>
         <Card className="mb-4">
           <div className="flex flex-col gap-y-1">

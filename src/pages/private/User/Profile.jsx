@@ -109,12 +109,14 @@ const Profile = () => {
 
   return (
     <>
-      {successToast && (
-        <NotificationToast
-          status="success"
-          message="Profile saved successfully"
-        />
-      )}
+      <div className="flex min-h-screen w-full items-center justify-center">
+        {successToast && (
+          <NotificationToast
+            status="success"
+            message="Profile saved successfully"
+          />
+        )}
+      </div>
       <section>
         <form onSubmit={handleUpdateProfile}>
           <Card className="mb-4">
