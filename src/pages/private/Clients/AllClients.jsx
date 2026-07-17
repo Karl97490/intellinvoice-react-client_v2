@@ -227,9 +227,13 @@ const AllClients = () => {
   if (isLoading || !clientStats) {
     return (
       <>
-        <div className="mx-auto flex flex-col gap-2 items-center">
-          <Spinner aria-label="Loading spinner" size="xl" />
-          <span className="text-md">Loading...</span>
+        <div className="flex min-h-screen w-full items-center justify-center">
+          <div className="mx-auto flex flex-col items-center gap-3 rounded-2xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+            <Spinner aria-label="Redirecting loading spinner" size="xl" />
+            <span className="text-md font-medium text-gray-700 dark:text-gray-200">
+              Loading...
+            </span>
+          </div>
         </div>
       </>
     );

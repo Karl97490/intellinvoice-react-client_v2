@@ -23,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 import { Check } from "lucide-react";
 import calculateInvoiceTotals from "../../../utils/calculateInvoiceTotals";
 import { AuthContext } from "../../../contexts/auth.context";
+import NotificationToast from "../../../components/ui/NotificationToast";
 
 const CreateInvoice = () => {
   const { user } = useContext(AuthContext);
@@ -205,24 +206,22 @@ const CreateInvoice = () => {
 
   if (isRedirecting) {
     return (
-      <div className="flex min-h-screen w-full items-center justify-center px-4">
-        {successToast && (
-          <Toast className="absolute top-15 z-100 border border-gray-100 shadow-sm">
-            <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
-              <Check size={14} />
-            </div>
-            <div className="ml-3 text-sm font-normal">
-              Save invoice sucessfully.
-            </div>
-          </Toast>
-        )}
-        <div className="mx-auto flex flex-col items-center gap-3 rounded-2xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-          <Spinner aria-label="Redirecting loading spinner" size="xl" />
-          <span className="text-md font-medium text-gray-700 dark:text-gray-200">
-            Redirecting...
-          </span>
+      <>
+        <div className="flex min-h-screen w-full items-center justify-center px-4">
+          {successToast && (
+            <NotificationToast
+              status="success"
+              message="Save invoice sucessfully."
+            />
+          )}
+          <div className="mx-auto flex flex-col items-center gap-3 rounded-2xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+            <Spinner aria-label="Redirecting loading spinner" size="xl" />
+            <span className="text-md font-medium text-gray-700 dark:text-gray-200">
+              Redirecting...
+            </span>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 

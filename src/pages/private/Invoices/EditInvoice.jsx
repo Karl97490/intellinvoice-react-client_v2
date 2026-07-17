@@ -22,6 +22,7 @@ import { Check } from "lucide-react";
 import validateRequiredFields from "../../../utils/validateRequiredFields";
 import delay from "../../../utils/delay";
 import calculateInvoiceTotals from "../../../utils/calculateInvoiceTotals";
+import NotificationToast from "../../../components/ui/NotificationToast";
 
 const EditInvoice = () => {
   const { invoiceId } = useParams();
@@ -199,24 +200,22 @@ const EditInvoice = () => {
   if (isLoading || isRedirecting) {
     return (
       <>
-        {successToast && (
-          <Toast className="border border-gray-100">
-            <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
-              <Check size={14} />
-            </div>
-            <div className="ml-3 text-sm font-normal">
-              Save invoice successfully.
-            </div>
-          </Toast>
-        )}
-        <div className="flex flex-col gap-2 items-center mx-auto">
-          <Spinner
-            aria-label={`${isRedirecting && "Redirecting"} Loading spinner`}
-            size="xl"
-          />
-          <span className="text-md">
-            {isLoading ? "Loading..." : "Redirecting..."}
-          </span>
+        <div className="flex min-h-screen w-full items-center justify-center">
+          {successToast && (
+            <NotificationToast
+              status="success"
+              message="Save invoice sucessfully."
+            />
+          )}
+          <div className="mx-auto flex flex-col items-center gap-3 rounded-2xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+            <Spinner
+              aria-label={`${isRedirecting && "Redirecting"} Loading spinner`}
+              size="xl"
+            />
+            <span className="text-md font-medium text-gray-700 dark:text-gray-200">
+              {isLoading ? "Loading..." : "Redirecting..."}
+            </span>
+          </div>
         </div>
       </>
     );
