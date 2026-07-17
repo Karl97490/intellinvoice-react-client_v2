@@ -63,7 +63,7 @@ const Login = () => {
     return (
       <div className="flex min-h-screen w-full items-center justify-center px-4">
         {successToast && (
-          <Toast className="absolute top-6 z-100 border border-gray-100 shadow-sm">
+          <Toast className="absolute top-15 z-100 border border-gray-100 shadow-sm">
             <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
               <Check size={14} />
             </div>

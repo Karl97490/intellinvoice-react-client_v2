@@ -85,8 +85,12 @@ const NavBar = () => {
   }
 
   return (
-    <Navbar fluid rounded className="fixed top-0 left-0 right-0 z-50">
-      <NavbarBrand>
+    <Navbar
+      fluid
+      rounded
+      className="fixed top-0 left-0 right-0 z-50 bg-gray-50"
+    >
+      <NavbarBrand as={Link} to="/">
         <img src={Logo} className="mr-3 h-6 sm:h-9" alt="IntellInvoice Logo" />
         <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
           IntellInvoice
