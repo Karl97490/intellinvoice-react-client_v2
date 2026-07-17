@@ -30,7 +30,7 @@ const NavBar = () => {
               alt="Flowbite React Logo"
             />
             <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
-              Flowbite React
+              IntellInvoice
             </span>
           </NavbarBrand>
           <div className="flex md:order-2">
@@ -88,19 +88,21 @@ const NavBar = () => {
           alt="Flowbite React Logo"
         />
         <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
-          Flowbite React
+          IntellInvoice
         </span>
       </NavbarBrand>
       <div className="flex md:order-2">
-        <Button className="cursor-pointer">Get started</Button>
+        <Button as={Link} to="/login" className="cursor-pointer">
+          Get started
+        </Button>
         <NavbarToggle />
       </div>
-      <NavbarCollapse>
-        <NavLink to="#" active>
+      <NavbarCollapse className="dark:text-white">
+        <NavLink to="/" active>
           Home
         </NavLink>
-        <NavLink to="#">About</NavLink>
-        <NavLink to="#">Contact</NavLink>
+        <NavLink to="/about">About</NavLink>
+        <NavLink to="/contact">Contact</NavLink>
       </NavbarCollapse>
     </Navbar>
   );
