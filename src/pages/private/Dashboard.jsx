@@ -20,7 +20,8 @@ import { AuthContext } from "../../contexts/auth.context";
 const Dashboard = () => {
   const [invoices, setInvoices] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { invoiceStats } = useContext(InvoiceStatsContext);
+  const { invoiceStats, getData: getInvoiceStats } =
+    useContext(InvoiceStatsContext);
   const { user } = useContext(AuthContext);
   const badgeColor = {
     unpaid: "failure",
@@ -31,6 +32,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     getData();
+    getInvoiceStats();
   }, []);
 
   const getData = async () => {
@@ -80,7 +82,9 @@ const Dashboard = () => {
                 </div>
                 <div className="flex-1 text-center dark:text-white">
                   <h4 className="font-semibold">Total Paid</h4>
-                  <span className="text-2xl">${invoiceStats.totalPaid}</span>
+                  <span className="text-2xl">
+                    ${invoiceStats.totalAmountPaid}
+                  </span>
                 </div>
               </div>
             </Card>
@@ -91,7 +95,9 @@ const Dashboard = () => {
                 </div>
                 <div className="flex-1 text-center dark:text-white">
                   <h4 className="font-semibold">Total Unpaid</h4>
-                  <span className="text-2xl">${invoiceStats.totalUnpaid}</span>
+                  <span className="text-2xl">
+                    ${invoiceStats.totalAmountUnpaid}
+                  </span>
                 </div>
               </div>
             </Card>
@@ -126,7 +132,8 @@ const Dashboard = () => {
                 </li>
                 <li className="flex gap-x-2 items-center">
                   <CornerDownRight size={16} />
-                  You have generated ${invoiceStats.totalPaid} in paid invoices
+                  You have generated ${invoiceStats.totalAmountPaid} in paid
+                  invoices
                 </li>
                 <li className="flex gap-x-2 items-center">
                   <CornerDownRight size={16} /> {invoiceStats.totalOverdue}{" "}
