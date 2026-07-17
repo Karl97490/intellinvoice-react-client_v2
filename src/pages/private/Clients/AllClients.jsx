@@ -286,7 +286,7 @@ const AllClients = () => {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              <div className="dark:text-white flex flex-col justify-between items-end">
+              <div className="dark:text-white flex flex-col justify-between items-center">
                 <p>
                   <strong>Total clients :</strong> {clientStats.totalClients}
                 </p>

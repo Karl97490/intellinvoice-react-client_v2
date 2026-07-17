@@ -15,10 +15,16 @@ const SideBar = () => {
   const { isLoggedIn, logout, authenticateUser } = useContext(AuthContext);
   const [openLogoutModal, setOpenLogoutModal] = useState(false);
 
+  const customTheme = {
+    root: {
+      base: "bg-white dark:bg-gray-900",
+    },
+  };
+
   if (isLoggedIn) {
     return (
       <>
-        <Sidebar className="fixed left-0 top-15 h-[calc(100vh-3.5rem)] w-64">
+        <Sidebar className="fixed left-0 top-15 h-[calc(100vh-3.5rem)] w-64 bg-none">
           <SidebarItems className="h-full flex flex-col justify-between">
             <SidebarItemGroup>
               <SidebarItem as={NavLink} to="/dashboard" icon={undefined}>

@@ -41,19 +41,7 @@ const CreateInvoice = () => {
     },
     items: [
       {
-        title: "Test 1",
-        quantity: 1,
-        taxRate: 2.5,
-        unitPrice: 0,
-      },
-      {
-        title: "Test 2",
-        quantity: 1,
-        taxRate: 2.5,
-        unitPrice: 0,
-      },
-      {
-        title: "Test 3",
+        title: "",
         quantity: 1,
         taxRate: 2.5,
         unitPrice: 0,
@@ -199,7 +187,7 @@ const CreateInvoice = () => {
       items: [
         ...prev.items,
         {
-          title: "New",
+          title: "",
           quantity: 1,
           taxRate: 2.5,
           unitPrice: 0,
@@ -519,6 +507,7 @@ const CreateInvoice = () => {
                                 name="title"
                                 type="text"
                                 data-section="items"
+                                placeholder="Item Description"
                                 value={item.title}
                                 onChange={(e) => handleChange(e, index)}
                               />
