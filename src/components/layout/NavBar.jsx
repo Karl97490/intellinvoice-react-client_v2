@@ -10,13 +10,14 @@ import {
   Avatar,
   Button,
 } from "flowbite-react";
+import { Menu, X } from "lucide-react";
 import { useContext, useState } from "react";
 import { NavLink, Link } from "react-router-dom";
 import { AuthContext } from "../../contexts/auth.context";
 import ConfirmationModal from "../ui/ConfirmationModal";
 import Logo from "../../assets/images/intellinvoice-logo.svg";
 
-const NavBar = () => {
+const NavBar = ({ isSidebarOpen = false, onToggleSidebar = () => {} }) => {
   const { user, isLoggedIn, logout } = useContext(AuthContext);
   const [openLogoutModal, setOpenLogoutModal] = useState(false);
 
@@ -39,6 +40,15 @@ const NavBar = () => {
             </span>
           </NavbarBrand>
           <div className="flex md:order-2">
+            <Button
+              color="light"
+              pill
+              className="mr-2 lg:hidden"
+              aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
+              onClick={onToggleSidebar}
+            >
+              {isSidebarOpen ? <X size={18} /> : <Menu size={18} />}
+            </Button>
             <Dropdown
               arrowIcon={false}
               inline

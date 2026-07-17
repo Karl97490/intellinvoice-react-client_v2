@@ -5,43 +5,116 @@ import {
   SidebarItemGroup,
   SidebarItems,
 } from "flowbite-react";
-import { ChartPie } from "lucide-react";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../contexts/auth.context";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import ConfirmationModal from "../ui/ConfirmationModal";
 
-const SideBar = () => {
-  const { isLoggedIn, logout, authenticateUser } = useContext(AuthContext);
+const SideBar = ({ isSidebarOpen = false, onCloseSidebar = () => {} }) => {
+  const { isLoggedIn, logout } = useContext(AuthContext);
   const [openLogoutModal, setOpenLogoutModal] = useState(false);
+  const location = useLocation();
 
-  const customTheme = {
-    root: {
-      base: "bg-white dark:bg-gray-900",
-    },
-  };
+  useEffect(() => {
+    if (window.innerWidth < 1024) {
+      onCloseSidebar();
+    }
+  }, [location.pathname, onCloseSidebar]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        onCloseSidebar();
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [onCloseSidebar]);
+
+  useEffect(() => {
+    if (!isSidebarOpen) return;
+
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
+        onCloseSidebar();
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [isSidebarOpen, onCloseSidebar]);
+
+  useEffect(() => {
+    const isMobileOrTablet = window.innerWidth < 1024;
+
+    if (isSidebarOpen && isMobileOrTablet) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isSidebarOpen]);
 
   if (isLoggedIn) {
     return (
       <>
-        <Sidebar className="fixed left-0 top-15 h-[calc(100vh-3.5rem)] w-64 bg-none">
+        {isSidebarOpen && (
+          <button
+            aria-label="Close sidebar"
+            className="fixed inset-0 top-15 z-30 bg-black/30 lg:hidden"
+            onClick={onCloseSidebar}
+            type="button"
+          />
+        )}
+        <Sidebar
+          className={`fixed left-0 top-15 z-40 h-[calc(100vh-3.5rem)] w-64 bg-none transform transition-transform duration-200 lg:translate-x-0 ${
+            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
           <SidebarItems className="h-full flex flex-col justify-between">
             <SidebarItemGroup>
-              <SidebarItem as={NavLink} to="/dashboard" icon={undefined}>
+              <SidebarItem
+                as={NavLink}
+                to="/dashboard"
+                icon={undefined}
+                onClick={onCloseSidebar}
+              >
                 Dashboard
               </SidebarItem>
               <SidebarCollapse icon={undefined} label="Invoices">
-                <SidebarItem as={NavLink} to="/invoices">
+                <SidebarItem
+                  as={NavLink}
+                  to="/invoices"
+                  onClick={onCloseSidebar}
+                >
                   List All
                 </SidebarItem>
-                <SidebarItem as={NavLink} to="/invoices/new">
+                <SidebarItem
+                  as={NavLink}
+                  to="/invoices/new"
+                  onClick={onCloseSidebar}
+                >
                   Add invoice
                 </SidebarItem>
               </SidebarCollapse>
-              <SidebarItem as={NavLink} to="/clients" icon={undefined}>
+              <SidebarItem
+                as={NavLink}
+                to="/clients"
+                icon={undefined}
+                onClick={onCloseSidebar}
+              >
                 Clients
               </SidebarItem>
-              <SidebarItem as={NavLink} to="/profile" icon={undefined}>
+              <SidebarItem
+                as={NavLink}
+                to="/profile"
+                icon={undefined}
+                onClick={onCloseSidebar}
+              >
                 Profile
               </SidebarItem>
             </SidebarItemGroup>
@@ -69,6 +142,8 @@ const SideBar = () => {
       </>
     );
   }
+
+  return null;
 };
 
 export default SideBar;

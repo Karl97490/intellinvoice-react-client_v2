@@ -506,6 +506,7 @@ const CreateInvoice = () => {
                           <TableCell className="whitespace-nowrap">
                             <div>
                               <TextInput
+                                className="min-w-50"
                                 name="title"
                                 type="text"
                                 data-section="items"
